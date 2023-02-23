@@ -16,6 +16,7 @@ using DataTable = System.Data.DataTable;
 using System.Runtime.InteropServices;
 using ProgressBar = System.Windows.Forms.ProgressBar;
 using Font = System.Drawing.Font;
+using System.Reflection;
 
 namespace SMTsetup
 {
@@ -172,10 +173,107 @@ namespace SMTsetup
                 textBox1.Focus();
                 
             }
+            
             else
             {
-                MessageBox.Show("Select folder with *.XLS files !");
-                button3.PerformClick();
+                 if (result == DialogResult.OK && Directory.EnumerateFiles(folderPath, "*.xlsx").Count() > 0)
+                {
+
+                    label1.Text = "";
+                    groupBox2.Text = "";
+                    frmLoadingScreen ls = new frmLoadingScreen();
+                    ls.Show();
+
+
+                    foreach (string file in Directory.EnumerateFiles(folderPath, "*.xlsx"))
+                    {
+
+                        //MessageBox.Show(folderPath.ToString());
+                        string contents = File.ReadAllText(file);
+
+                        //MessageBox.Show(file.ToString());
+                        //string file = openFileDialog1.FileName;
+
+                        string thesheetName = (System.IO.Path.GetFileNameWithoutExtension(file)).ToString();
+                        //MessageBox.Show(thesheetName);
+                        m = thesheetName.Substring(thesheetName.Length - 1);
+                        label1.Text += file + "\n";
+                        groupBox2.Text += file + " ";
+                        try
+                        {
+                            //string text = File.ReadAllText(file);
+                            // size = text.Length;
+                            //List<string> values = new List<string>();
+                            string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + file + "; Extended Properties=\"Excel 12.0 Xml;HDR=NO;\"";
+                            //MessageBox.Show(constr.ToString());
+                            using (OleDbConnection conn = new OleDbConnection(constr))
+                            {
+                                conn.Open();
+                                //OleDbCommand command = new OleDbCommand("Select * from [Sheet1$]", conn);
+                                OleDbCommand command = new OleDbCommand("Select * from [" + thesheetName + "$]", conn);
+                                OleDbDataReader reader = command.ExecuteReader();
+                                if (reader.HasRows)
+                                {
+                                    int i = 0;
+
+                                    while (reader.Read())
+                                    {
+                                        i += 1;
+
+                                        // this assumes just one column, and the value is text
+                                        //string value = reader[0].ToString();
+                                        BomItem abc = new BomItem
+                                        {
+                                            SetNo = "M" + m + "-" + reader[0].ToString(),
+                                            CompName = reader[1].ToString(),
+                                            Comment = reader[2].ToString(),
+                                            FdrType = reader[3].ToString(),
+                                            PitchIndex = reader[4].ToString()
+                                        };
+                                        if (i == 4)
+                                        {
+                                            //groupBox2.Text += reader[7].ToString() + ".....Machine (" + m + ")";
+                                        }
+                                        if (i > 4 && reader[0].ToString() != "")
+                                        {
+                                            items.Add(abc);
+                                            //countItems++;
+                                        }
+
+                                        //values.Add(value);
+
+                                    }
+                                }
+                                conn.Close();
+                            }
+
+
+                        }
+                        catch (IOException)
+                        {
+                        }
+
+
+                    }
+                    ls.Hide();
+                    countItems = items.Count();
+                    progressBar1.Maximum = items.Count();
+                    progressBar2.Maximum = items.Count();
+
+                    progressBar1.Value = items.Count();
+
+                    Availableitems = items;
+                    RepopulateAvailableTable();
+                    textBox1.Enabled = true;
+                    textBox1.Focus();
+
+                }
+                else
+                {
+                    MessageBox.Show("Select folder with *.XLS/*.XLSX files !");
+                    button3.PerformClick();
+                }
+                
             }
            
 
@@ -258,7 +356,7 @@ namespace SMTsetup
             {
                 Atable.Load(reader);
             }
-            dataGridView1.DataSource = Atable;
+            dataGridView1.DataSource = Atable.DefaultView;
             groupBox3.Text = "Avaliable items : " + Availableitems.Count.ToString() + "/" + countItems.ToString();
 
 
@@ -290,7 +388,9 @@ namespace SMTsetup
                 //progressBar1.Refresh();
             }
             
-            
+            dataGridView1.Update();
+
+
         }
        
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -360,17 +460,62 @@ namespace SMTsetup
 
         private void textBox1_TextChanged_1(object sender, EventArgs e)
         {
-            
+            if(comboBox1.Text=="ENE_")
+            {
+                FilterAvaliableGW(comboBox1.Text + textBox1.Text);
+            }
+            else if(comboBox1.Text == "---_" && textBox1.Text.Length>14)
+            {
+                FilterAvaliableGW(textBox1.Text.Substring(4));
+            }
+            else
+            {
+                FilterAvaliableGW(textBox1.Text);
+            }
+
+            //if (comboBox1.SelectedIndex == 2 && textBox1.Text.Length > 14 && textBox1.Text != "")
+            //{
+
+            //    FilterAvaliableGW(textBox1.Text.Substring(4));
+            //    if (comboBox1.SelectedIndex == 1 && textBox1.Text != "")
+            //    {
+
+
+            //        FilterAvaliableGW("ENE_" + textBox1.Text);
+
+            //        if (comboBox1.SelectedIndex == 0 && textBox1.Text != "")
+            //        {
+            //            FilterAvaliableGW(textBox1.Text);
+            //        }
+            //        else
+            //        {
+            //            DataView dv = Atable.DefaultView;
+            //            dataGridView1.DataSource = dv;
+            //            dataGridView1.Update();
+            //            styleFormatter(dataGridView1);
+
+            //        }
+            //    }
+
+            //}
+
+
+
+        }
+
+        private void FilterAvaliableGW(string searchString)
+        {
             DataView dv = Atable.DefaultView;
-            dv.RowFilter = "CompName LIKE '%" + textBox1.Text + "%'";
+            dv.RowFilter = "CompName LIKE '%" + searchString + "%'";
             dataGridView1.DataSource = dv;
+            
             styleFormatter(dataGridView1);
         }
 
         private void textBox1_KeyDown_1(object sender, KeyEventArgs e)
         {
 
-            if (e.KeyCode == Keys.Enter && textBox1.Text != "")
+            if (e.KeyCode == Keys.Enter && textBox1.Text != string.Empty)
             {
                 dataGridView2.ClearSelection();
 
@@ -386,61 +531,113 @@ namespace SMTsetup
                 {
 
                     MessageBox.Show(textBox1.Text + " Not found in AVALIABLE ITEMS list");
+                    //AlreadyFoundLogic(textBox1.Text);
 
+
+                    if (comboBox1.Text == "ENE_")
+                    {
+                        AlreadyFoundLogic(comboBox1.Text + textBox1.Text);
+                    }
+                    else if (comboBox1.Text == "---_" && textBox1.Text.Length > 14)
+                    {
+                        AlreadyFoundLogic(textBox1.Text.Substring(4));
+                    }
+                    else
+                    {
+                        AlreadyFoundLogic(textBox1.Text);
+                    }
                     //dv2 = Ftable.DefaultView;
                     //dv2.RowFilter = "CompName LIKE '%" + textBox1.Text + "%'";
                     //dataGridView2.DataSource = dv2;
                     //styleFormatter(dataGridView2);
-                    string searchValue = comboBox1.SelectedItem.ToString()+ textBox1.Text;
+
+                    //string searchValue = string.Empty;
+                    //if(comboBox1.SelectedIndex== 2)
+                    //{
+                    //    if(textBox1.Text.Length>14)
+                    //    {
+                    //        searchValue = textBox1.Text.Substring(3);
+                    //    }
+
+                    //}
+                    //else if(comboBox1.SelectedIndex== 1)
+                    //{
+                    //    searchValue = "ENE_" + textBox1.Text;
+                    //}
+                    //else if (comboBox1.SelectedIndex == 0)
+                    //{
+                    //    searchValue = textBox1.Text;
+                    //}
 
                     //MessageBox.Show(searchValue);
+                    //if (comboBox1.SelectedIndex == 2 && textBox1.Text.Length > 14 && textBox1.Text != "")
+                    //{
+                    //    AlreadyFoundLogic(textBox1.Text.Substring(4));
+                    //}
+                    //else if (comboBox1.SelectedIndex == 1 && textBox1.Text != "")
+                    //{
+                    //    AlreadyFoundLogic(textBox1.Text);
+                    //}
+                    //else if (comboBox1.SelectedIndex == 0 && textBox1.Text != "")
+                    //{         
 
-                    dataGridView2.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-                    try
-                    {
-                        foreach (DataGridViewRow row in dataGridView2.Rows)
-                        {
-                            if (row.Cells[1].Value.ToString().Equals(searchValue))
-                            {
-                                MessageBox.Show(searchValue +" already exists in the FOUND ITEMS list !");
-                                row.Selected = true;
-                                dataGridView2.CurrentCell = dataGridView2.Rows[row.Index].Cells[0];
-                                string pr = dataGridView2.Rows[row.Index].Cells[4].Value.ToString();
-
-                                PrintDocument p = new PrintDocument();
-                                p.PrintPage += delegate (object sender1, PrintPageEventArgs e1)
-                                {
-                                    Margins margins = new Margins(0, 0, 0, 0);
-                                    p.DefaultPageSettings.Margins = margins;
-                                    e1.Graphics.DrawString(pr, new Font("Times New Roman", 17, FontStyle.Bold), new SolidBrush(Color.Black), new RectangleF(5, 5, 180, 90));
-                                };
-                                try
-                                {
-                                    p.Print();
-                                }
-                                catch (Exception ex)
-                                {
-                                    throw new Exception("Exception Occured While Printing", ex);
-                                }
-
-                                break;
-                            }
-                        }
-                    }
-                    catch (Exception exc)
-                    {
-                        MessageBox.Show(exc.Message);
-                    }
-
+                    //}
 
                     textBox1.Clear();
                     DataView dv = Atable.DefaultView;
                     dataGridView1.DataSource = dv;
+                    dataGridView1.Update();
                     styleFormatter(dataGridView1);
-                    
+
+                }
+
+                
+            }
+
+
+        }
+
+        private void AlreadyFoundLogic(string searchValue)
+        {
+            dataGridView2.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            try
+            {
+                foreach (DataGridViewRow row in dataGridView2.Rows)
+                {
+                    if (row.Cells[1].Value.ToString().Equals(searchValue))
+                    {
+                        MessageBox.Show(searchValue + " already exists in the FOUND ITEMS list !");
+                        row.Selected = true;
+                        dataGridView2.CurrentCell = dataGridView2.Rows[row.Index].Cells[0];
+                        string pr = dataGridView2.Rows[row.Index].Cells[4].Value.ToString();
+
+                        PrintDocument p = new PrintDocument();
+                        p.PrintPage += delegate (object sender1, PrintPageEventArgs e1)
+                        {
+                            Margins margins = new Margins(0, 0, 0, 0);
+                            p.DefaultPageSettings.Margins = margins;
+                            e1.Graphics.DrawString(pr, new Font("Arial", 14, FontStyle.Bold), new SolidBrush(Color.Black), new RectangleF(5, 5, 170, 90));
+                        };
+                        try
+                        {
+                            p.Print();
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new Exception("Exception Occured While Printing", ex);
+                        }
+
+                        break;
+                    }
                 }
             }
+            catch (Exception exc)
+            {
+                MessageBox.Show(exc.Message);
+            }
+            RepopulateAvailableTable();
         }
+
         private void SendToPrint(BomItem itemToRemove)
         {
             //MessageBox.Show(itemToRemove.CompName.ToString() + " " + itemToRemove.SetNo.ToString());
@@ -463,7 +660,7 @@ namespace SMTsetup
             {
                 Margins margins = new Margins(0, 0, 0, 0);
                 p.DefaultPageSettings.Margins = margins;
-                e1.Graphics.DrawString(pr, new Font("Times New Roman", 17,FontStyle.Bold), new SolidBrush(Color.Black), new RectangleF(5, 5, 180, 90));
+                e1.Graphics.DrawString(pr, new Font("Arial", 14, FontStyle.Bold), new SolidBrush(Color.Black), new RectangleF(5, 5, 170, 90));
             };
             try
             {
@@ -494,6 +691,11 @@ namespace SMTsetup
                 }
 
             }
+        }
+
+        private void textBox1_KeyUp(object sender, KeyEventArgs e)
+        {
+          
         }
     }
 }
