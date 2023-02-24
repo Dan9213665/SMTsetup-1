@@ -17,6 +17,8 @@ using System.Runtime.InteropServices;
 using ProgressBar = System.Windows.Forms.ProgressBar;
 using Font = System.Drawing.Font;
 using System.Reflection;
+using System.Xml;
+using System.Xml.Serialization;
 
 namespace SMTsetup
 {
@@ -35,7 +37,8 @@ namespace SMTsetup
         System.Data.DataTable Atable = new DataTable();
         DataTable Ftable = new DataTable();
         public int countItems = 0;
-        string m = "";
+        string m = string.Empty;
+        string loadedDirNameCSPS = string.Empty;
         public SMTSetupMain()
         {
             InitializeComponent();
@@ -88,8 +91,10 @@ namespace SMTsetup
                 groupBox2.Text = "";
                 frmLoadingScreen ls = new frmLoadingScreen();
                 ls.Show();
-                
-                
+                loadedDirNameCSPS = folderPath.ToString();
+
+
+
                 foreach (string file in Directory.EnumerateFiles(folderPath, "*.xls"))
                 {
 
@@ -664,13 +669,16 @@ namespace SMTsetup
             };
             try
             {
-                p.Print();
+                //p.Print();
+                addToXML();
             }
             catch (Exception ex)
             {
                 throw new Exception("Exception Occured While Printing", ex);
             }
         }
+
+    
 
         private void folderBrowserDialog1_HelpRequest(object sender, EventArgs e)
         {
@@ -692,7 +700,37 @@ namespace SMTsetup
 
             }
         }
+        private void addToXML()
+        {
+            List<BomItem> FounditemstoXml = Founditems;
+            string s= SerializeToXml(FounditemstoXml);
+           // string s = "<xml><foo></foo></xml>";
+            XmlDocument xdoc = new XmlDocument();
+            xdoc.LoadXml(s);
+            string theLogFileName = loadedDirNameCSPS + ".log";
+            xdoc.Save(theLogFileName);
 
+            //throw new NotImplementedException();
+        }
+        private void loadFromXML()
+        {
+
+        }
+        public string SerializeToXml(object input)
+        {
+            XmlSerializer ser = new XmlSerializer(input.GetType(), "http://schemas.yournamespace.com");
+            string result = string.Empty;
+
+            using (MemoryStream memStm = new MemoryStream())
+            {
+                ser.Serialize(memStm, input);
+
+                memStm.Position = 0;
+                result = new StreamReader(memStm).ReadToEnd();
+            }
+
+            return result;
+        }
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
         {
           
