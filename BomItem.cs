@@ -13,6 +13,8 @@ namespace SMTsetup
         public string? Comment { get; set; }
 
         public string? FdrType { get; set; }
-        public string? PitchIndex { get; set; }
+        public string? PitchIndex { get; set;}
+
+        public bool FoundTheItem { get; set; }
     }
 }

@@ -138,7 +138,8 @@ namespace SMTsetup
                                         CompName = reader[1].ToString(),
                                         Comment = reader[2].ToString(),
                                         FdrType = reader[3].ToString(),
-                                        PitchIndex = reader[4].ToString()
+                                        PitchIndex = reader[4].ToString(),
+                                        FoundTheItem=false
                                      
                                        
                                     };
@@ -158,14 +159,10 @@ namespace SMTsetup
                             }
                             conn.Close();
                         }
-                        
-                       
                     }
                     catch (IOException)
                     {
                     }
-
-
                 }
                 ls.Hide();
                 countItems = items.Count();
@@ -235,7 +232,8 @@ namespace SMTsetup
                                             CompName = reader[1].ToString(),
                                             Comment = reader[2].ToString(),
                                             FdrType = reader[3].ToString(),
-                                            PitchIndex = reader[4].ToString()
+                                            PitchIndex = reader[4].ToString(),
+                                            FoundTheItem = false
                                         };
                                         if (i == 4)
                                         {
@@ -253,14 +251,10 @@ namespace SMTsetup
                                 }
                                 conn.Close();
                             }
-
-
                         }
                         catch (IOException)
                         {
                         }
-
-
                     }
                     ls.Hide();
                     countItems = items.Count();
@@ -280,79 +274,7 @@ namespace SMTsetup
                     MessageBox.Show("Select folder with *.XLS/*.XLSX files !");
                     button3.PerformClick();
                 }
-                
             }
-           
-
-            //if (result == DialogResult.OK) // Test result.
-            //{
-
-            //    string file = openFileDialog1.FileName;
-
-            //    string thesheetName = (System.IO.Path.GetFileNameWithoutExtension(openFileDialog1.FileName)).ToString();
-            //    //MessageBox.Show(thesheetName);
-            //    m = thesheetName.Substring(thesheetName.Length - 1);
-            //    label1.Text = file;
-            //    groupBox2.Text = file;
-            //    try
-            //    {
-            //        //string text = File.ReadAllText(file);
-            //        // size = text.Length;
-            //        //List<string> values = new List<string>();
-            //        string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + file + "; Extended Properties=\"Excel 12.0 Xml;HDR=NO;\"";
-            //        //MessageBox.Show(constr.ToString());
-            //        using (OleDbConnection conn = new OleDbConnection(constr))
-            //        {
-            //            conn.Open();
-            //            //OleDbCommand command = new OleDbCommand("Select * from [Sheet1$]", conn);
-            //            OleDbCommand command = new OleDbCommand("Select * from [" + thesheetName + "$]", conn);
-            //            OleDbDataReader reader = command.ExecuteReader();
-            //            if (reader.HasRows)
-            //            {
-            //                int i = 0;
-            //                while (reader.Read())
-            //                {
-            //                    i += 1;
-            //                    // this assumes just one column, and the value is text
-            //                    //string value = reader[0].ToString();
-            //                    BomItem abc = new BomItem
-            //                    {
-            //                        SetNo = m + "-" + reader[0].ToString(),
-            //                        CompName = reader[1].ToString(),
-            //                        Comment = reader[2].ToString(),
-            //                        FdrType = reader[3].ToString(),
-            //                        PitchIndex = reader[4].ToString()
-            //                    };
-            //                    if (i == 4)
-            //                    {
-            //                        groupBox2.Text = reader[7].ToString() + ".....Machine (" + m + ")";
-            //                    }
-            //                    if (i > 4 && reader[0].ToString() != "")
-            //                    {
-            //                        items.Add(abc);
-            //                        //countItems++;
-            //                    }
-
-            //                    //values.Add(value);
-
-            //                }
-            //            }
-            //            conn.Close();
-            //        }
-            //        countItems = items.Count();
-            //        Availableitems = items;
-            //        RepopulateAvailableTable();
-            //        textBox1.Enabled = true;
-            //        textBox1.Focus();
-            //    }
-            //    catch (IOException)
-            //    {
-            //    }
-            //}
-            //Console.WriteLine(size); // <-- Shows file size in debugging mode.
-            //Console.WriteLine(result); // <-- For debugging use.
-
-
         }
        
         private void RepopulateAvailableTable()
@@ -365,26 +287,9 @@ namespace SMTsetup
             }
             dataGridView1.DataSource = Atable.DefaultView;
             groupBox3.Text = "Avaliable items : " + Availableitems.Count.ToString() + "/" + countItems.ToString();
-
-
-            
-            
-            this.dataGridView1.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridView1.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridView1.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridView1.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridView1.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-           
-            dataGridView1.AutoResizeColumns();
             styleFormatter(dataGridView1);
-
             progressBar1.RightToLeftLayout = true;
-            
-            
             progressBar1.Style = ProgressBarStyle.Blocks;
-            //progressBar1.SetState(2);
-            //progressBar1.ForeColor = Color.Gray;
-            //progressBar1.BackColor = Color.PaleVioletRed;
             if(Availableitems.Count>=0)
             {
                 progressBar1.Value = Availableitems.Count;
@@ -392,12 +297,8 @@ namespace SMTsetup
             else
             {
                 progressBar1.Value = 0;
-                //progressBar1.Refresh();
             }
-            
             dataGridView1.Update();
-
-
         }
        
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
@@ -420,41 +321,27 @@ namespace SMTsetup
             {
                 Ftable.Load(reader);
             }
-            dataGridView2.DataSource = Ftable;
-
+            dataGridView2.DataSource = Ftable.DefaultView;
             groupBox5.Text = "Found items : " + Founditems.Count.ToString() + "/" + countItems.ToString();
-            this.dataGridView2.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridView2.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridView2.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridView2.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            this.dataGridView2.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            dataGridView2.AutoResizeColumns();
             styleFormatter(dataGridView2);
-
-            
             progressBar2.Value = Founditems.Count;
-           
-            
         }
        
         private void MoveItemFromAvaliableToFound(int index)
         {
             try
             {
-                //MessageBox.Show(dataGridView1.Rows[e.RowIndex].Cells[1].Value.ToString());
                 BomItem b = new BomItem
                 {
-
-                    SetNo = dataGridView1.Rows[index].Cells[4].Value.ToString(),
-                    CompName = dataGridView1.Rows[index].Cells[1].Value.ToString(),
-                    Comment = dataGridView1.Rows[index].Cells[0].Value.ToString(),
-                    FdrType = dataGridView1.Rows[index].Cells[2].Value.ToString(),
-                    PitchIndex = dataGridView1.Rows[index].Cells[3].Value.ToString(),
-                   
-                    
+                    SetNo = dataGridView1.Rows[index].Cells[dataGridView1.Columns["SetNo"].DisplayIndex].Value.ToString(),
+                    CompName = dataGridView1.Rows[index].Cells[dataGridView1.Columns["CompName"].DisplayIndex].Value.ToString(),
+                    Comment = dataGridView1.Rows[index].Cells[dataGridView1.Columns["Comment"].DisplayIndex].Value.ToString(),
+                    FdrType = dataGridView1.Rows[index].Cells[dataGridView1.Columns["FdrType"].DisplayIndex].Value.ToString(),
+                    PitchIndex = dataGridView1.Rows[index].Cells[dataGridView1.Columns["PitchIndex"].DisplayIndex].Value.ToString(),
+                    FoundTheItem = true
                 };
                 Founditems.Add(b);
-                var itemToRemove = Availableitems.Single(r => r.CompName == dataGridView1.Rows[index].Cells[1].Value.ToString());
+                var itemToRemove = Availableitems.Single(r => r.CompName == dataGridView1.Rows[index].Cells[dataGridView1.Columns["CompName"].DisplayIndex].Value.ToString());
                 Availableitems.Remove(itemToRemove);
                 SendToPrint(itemToRemove);
                 RepopulateFoundTable();
@@ -481,35 +368,6 @@ namespace SMTsetup
             {
                 FilterAvaliableGW(textBox1.Text);
             }
-
-            //if (comboBox1.SelectedIndex == 2 && textBox1.Text.Length > 14 && textBox1.Text != "")
-            //{
-
-            //    FilterAvaliableGW(textBox1.Text.Substring(4));
-            //    if (comboBox1.SelectedIndex == 1 && textBox1.Text != "")
-            //    {
-
-
-            //        FilterAvaliableGW("ENE_" + textBox1.Text);
-
-            //        if (comboBox1.SelectedIndex == 0 && textBox1.Text != "")
-            //        {
-            //            FilterAvaliableGW(textBox1.Text);
-            //        }
-            //        else
-            //        {
-            //            DataView dv = Atable.DefaultView;
-            //            dataGridView1.DataSource = dv;
-            //            dataGridView1.Update();
-            //            styleFormatter(dataGridView1);
-
-            //        }
-            //    }
-
-            //}
-
-
-
         }
 
         private void FilterAvaliableGW(string searchString)
@@ -523,26 +381,16 @@ namespace SMTsetup
 
         private void textBox1_KeyDown_1(object sender, KeyEventArgs e)
         {
-
             if (e.KeyCode == Keys.Enter && textBox1.Text != string.Empty)
             {
                 dataGridView2.ClearSelection();
-
-                // DataView dv2 = Ftable.DefaultView;
-                //dataGridView2.DataSource = dv2;
-                //styleFormatter(dataGridView2);
-
                 try
                 {
                     MoveItemFromAvaliableToFound(dataGridView1.CurrentCell.RowIndex);
                 }
                 catch (Exception)
                 {
-
                     MessageBox.Show(textBox1.Text + " Not found in AVALIABLE ITEMS list");
-                    //AlreadyFoundLogic(textBox1.Text);
-
-
                     if (comboBox1.Text == "ENE_")
                     {
                         AlreadyFoundLogic(comboBox1.Text + textBox1.Text);
@@ -555,55 +403,13 @@ namespace SMTsetup
                     {
                         AlreadyFoundLogic(textBox1.Text);
                     }
-                    //dv2 = Ftable.DefaultView;
-                    //dv2.RowFilter = "CompName LIKE '%" + textBox1.Text + "%'";
-                    //dataGridView2.DataSource = dv2;
-                    //styleFormatter(dataGridView2);
-
-                    //string searchValue = string.Empty;
-                    //if(comboBox1.SelectedIndex== 2)
-                    //{
-                    //    if(textBox1.Text.Length>14)
-                    //    {
-                    //        searchValue = textBox1.Text.Substring(3);
-                    //    }
-
-                    //}
-                    //else if(comboBox1.SelectedIndex== 1)
-                    //{
-                    //    searchValue = "ENE_" + textBox1.Text;
-                    //}
-                    //else if (comboBox1.SelectedIndex == 0)
-                    //{
-                    //    searchValue = textBox1.Text;
-                    //}
-
-                    //MessageBox.Show(searchValue);
-                    //if (comboBox1.SelectedIndex == 2 && textBox1.Text.Length > 14 && textBox1.Text != "")
-                    //{
-                    //    AlreadyFoundLogic(textBox1.Text.Substring(4));
-                    //}
-                    //else if (comboBox1.SelectedIndex == 1 && textBox1.Text != "")
-                    //{
-                    //    AlreadyFoundLogic(textBox1.Text);
-                    //}
-                    //else if (comboBox1.SelectedIndex == 0 && textBox1.Text != "")
-                    //{         
-
-                    //}
-
                     textBox1.Clear();
                     DataView dv = Atable.DefaultView;
                     dataGridView1.DataSource = dv;
                     dataGridView1.Update();
                     styleFormatter(dataGridView1);
-
                 }
-
-                
             }
-
-
         }
 
         private void AlreadyFoundLogic(string searchValue)
@@ -613,12 +419,12 @@ namespace SMTsetup
             {
                 foreach (DataGridViewRow row in dataGridView2.Rows)
                 {
-                    if (row.Cells[1].Value.ToString().Equals(searchValue))
+                    if (row.Cells[dataGridView1.Columns["CompName"].DisplayIndex].Value.ToString().Equals(searchValue))
                     {
                         MessageBox.Show(searchValue + " already exists in the FOUND ITEMS list !");
                         row.Selected = true;
-                        dataGridView2.CurrentCell = dataGridView2.Rows[row.Index].Cells[0];
-                        string pr = dataGridView2.Rows[row.Index].Cells[4].Value.ToString();
+                        dataGridView2.CurrentCell = dataGridView2.Rows[row.Index].Cells[dataGridView1.Columns["CompName"].DisplayIndex];
+                        string pr = dataGridView2.Rows[row.Index].Cells[dataGridView1.Columns["SetNo"].DisplayIndex].Value.ToString();
 
                         PrintDocument p = new PrintDocument();
                         p.PrintPage += delegate (object sender1, PrintPageEventArgs e1)
@@ -690,16 +496,33 @@ namespace SMTsetup
         }
         private void styleFormatter(DataGridView dgw)
         {
+            dgw.Columns["CompName"].DisplayIndex = 1;
+            dgw.Columns["Comment"].DisplayIndex = 2;
+            dgw.Columns["FdrType"].DisplayIndex = 3;
+            dgw.Columns["PitchIndex"].DisplayIndex =4;
+            dgw.Columns["SetNo"].DisplayIndex =5;
+            dgw.Columns["FoundTheItem"].Visible = false;
+
+            dgw.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.AutoResizeColumns();
+
+            int setNoColIndex = dgw.Columns["SetNo"].DisplayIndex;
+
             foreach (DataGridViewRow r in dgw.Rows)
             {
                 //MessageBox.Show(r.Cells[4].Value.ToString());
-                if (r.Cells[4].Value.ToString().StartsWith("M1"))
+                if (r.Cells[setNoColIndex].Value.ToString().StartsWith("M1"))
                 {
-                    dgw.Rows[r.Index].Cells[4].Style.BackColor = Color.LightGreen;
+                    dgw.Rows[r.Index].Cells[setNoColIndex].Style.BackColor =  Color.LightGreen;
                 }
-                else if (r.Cells[4].Value.ToString().StartsWith("M2"))
+                else if (r.Cells[setNoColIndex].Value.ToString().StartsWith("M2"))
                 {
-                    dgw.Rows[r.Index].Cells[4].Style.BackColor = Color.PaleVioletRed;
+                    dgw.Rows[r.Index].Cells[setNoColIndex].Style.BackColor = Color.PaleVioletRed;
                 }
 
             }
@@ -753,7 +576,41 @@ namespace SMTsetup
 
         private void button1_Click(object sender, EventArgs e)
         {
+            items.Clear();
+            Availableitems.Clear();
+            Founditems.Clear();
+            Atable.Clear();
+            Ftable.Clear();
+            groupBox5.ResetText();
+            groupBox3.ResetText();
 
+
+
+            //int size = -1;
+           openFileDialog2.InitialDirectory = "\\\\dbr1\\Data\\SMT\\SETUP";
+            //openFileDialog1.InitialDirectory = "\\\\dbr1\\Data\\SMT\\SETUP";
+             openFileDialog2.Filter = "LOG files(*.log) | *.log";
+            //DialogResult result = openFileDialog1.ShowDialog(); // Show the dialog.
+            DialogResult result = openFileDialog2.ShowDialog();
+            openFileDialog2.Multiselect = false;
+            string foldefileName = openFileDialog2.FileName;
+           
+            MessageBox.Show(foldefileName.ToString());
+
+            label1.Text += foldefileName.ToString() + "\n";
+            groupBox2.Text += foldefileName.ToString() + " ";
+
+
+
+            //if (result == DialogResult.OK && Directory.EnumerateFiles(folderPath, "*.log").Count() > 0) // Test result.
+            //{
+            //    label1.Text = "";
+            //    groupBox2.Text = "";
+            //    frmLoadingScreen ls = new frmLoadingScreen();
+            //    ls.Show();
+            //    loadedDirNameCSPS = folderPath.ToString();
+            //}
         }
+
     }
 }
