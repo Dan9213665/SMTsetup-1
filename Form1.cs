@@ -136,7 +136,7 @@ namespace SMTsetup
                                     {
                                         SetNo = "M"+m + "-" + reader[0].ToString(),
                                         CompName = reader[1].ToString(),
-                                        Comment = reader[2].ToString(),
+                                        Comments = reader[2].ToString(),
                                         FdrType = reader[3].ToString(),
                                         PitchIndex = reader[4].ToString(),
                                         FoundTheItem=false
@@ -230,7 +230,7 @@ namespace SMTsetup
                                         {
                                             SetNo = "M" + m + "-" + reader[0].ToString(),
                                             CompName = reader[1].ToString(),
-                                            Comment = reader[2].ToString(),
+                                            Comments = reader[2].ToString(),
                                             FdrType = reader[3].ToString(),
                                             PitchIndex = reader[4].ToString(),
                                             FoundTheItem = false
@@ -315,8 +315,8 @@ namespace SMTsetup
         }
         private void RepopulateFoundTable()
         {
-            IEnumerable<BomItem> data = Founditems;
             Ftable.Clear();
+            IEnumerable<BomItem> data = Founditems;
             using (var reader = ObjectReader.Create(data))
             {
                 Ftable.Load(reader);
@@ -335,7 +335,7 @@ namespace SMTsetup
                 {
                     SetNo = dataGridView1.Rows[index].Cells[dataGridView1.Columns["SetNo"].DisplayIndex].Value.ToString(),
                     CompName = dataGridView1.Rows[index].Cells[dataGridView1.Columns["CompName"].DisplayIndex].Value.ToString(),
-                    Comment = dataGridView1.Rows[index].Cells[dataGridView1.Columns["Comment"].DisplayIndex].Value.ToString(),
+                    Comments = dataGridView1.Rows[index].Cells[dataGridView1.Columns["Comments"].DisplayIndex].Value.ToString(),
                     FdrType = dataGridView1.Rows[index].Cells[dataGridView1.Columns["FdrType"].DisplayIndex].Value.ToString(),
                     PitchIndex = dataGridView1.Rows[index].Cells[dataGridView1.Columns["PitchIndex"].DisplayIndex].Value.ToString(),
                     FoundTheItem = true
@@ -455,11 +455,8 @@ namespace SMTsetup
 
         private void SendToPrint(BomItem itemToRemove)
         {
-            //MessageBox.Show(itemToRemove.CompName.ToString() + " " + itemToRemove.SetNo.ToString());
             string s = itemToRemove.CompName.ToString() + " " + itemToRemove.SetNo.ToString();
             string pr = itemToRemove.SetNo.ToString();
-            //MessageBox.Show(s,"",MessageBoxButtons.OK,MessageBoxIcon.Information);
-            
             textBox2.Text= s+" "+ DateTime.Now.ToString("HH:mm:ss");
             if (itemToRemove.SetNo.StartsWith("M1-"))
                 {
@@ -469,7 +466,6 @@ namespace SMTsetup
             {
                 textBox2.BackColor = Color.PaleVioletRed;
             }
-
             PrintDocument p = new PrintDocument();
             p.PrintPage += delegate (object sender1, PrintPageEventArgs e1)
             {
@@ -497,7 +493,7 @@ namespace SMTsetup
         private void styleFormatter(DataGridView dgw)
         {
             dgw.Columns["CompName"].DisplayIndex = 1;
-            dgw.Columns["Comment"].DisplayIndex = 2;
+            dgw.Columns["Comments"].DisplayIndex = 2;
             dgw.Columns["FdrType"].DisplayIndex = 3;
             dgw.Columns["PitchIndex"].DisplayIndex =4;
             dgw.Columns["SetNo"].DisplayIndex =5;
@@ -524,31 +520,18 @@ namespace SMTsetup
                 {
                     dgw.Rows[r.Index].Cells[setNoColIndex].Style.BackColor = Color.PaleVioletRed;
                 }
-
             }
         }
         private void addToXML()
         {
-
-            List<BomItem> FounditemstoXml = Founditems;
-            List<BomItem> AvailableitemstoXml = Availableitems;
-
             List<BomItem> allData = new List<BomItem>();
-
             allData.AddRange(Founditems);
             allData.AddRange(Availableitems);
-
             string s= SerializeToXml(allData);
-
-           
-            // string s = "<xml><foo></foo></xml>";
             XmlDocument xdoc = new XmlDocument();
             xdoc.LoadXml(s);
-            
-            string theLogFileName = loadedDirNameCSPS + ".log";
+            string theLogFileName = loadedDirNameCSPS + DateTime.Now.ToString("_yyMMddHHmm")+ ".log";
             xdoc.Save(theLogFileName);
-
-            //throw new NotImplementedException();
         }
         private void loadFromXML()
         {
