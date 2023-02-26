@@ -13,5 +13,6 @@ namespace SMTsetup
         public String? IPN;
         public int Qty;
         public string? CSPS;
+        public bool foundTheReel;
     }
 }

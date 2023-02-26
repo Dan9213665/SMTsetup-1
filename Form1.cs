@@ -139,6 +139,8 @@ namespace SMTsetup
                                         Comment = reader[2].ToString(),
                                         FdrType = reader[3].ToString(),
                                         PitchIndex = reader[4].ToString()
+                                     
+                                       
                                     };
                                     if (i == 4)
                                     {
@@ -447,7 +449,9 @@ namespace SMTsetup
                     CompName = dataGridView1.Rows[index].Cells[1].Value.ToString(),
                     Comment = dataGridView1.Rows[index].Cells[0].Value.ToString(),
                     FdrType = dataGridView1.Rows[index].Cells[2].Value.ToString(),
-                    PitchIndex = dataGridView1.Rows[index].Cells[3].Value.ToString()
+                    PitchIndex = dataGridView1.Rows[index].Cells[3].Value.ToString(),
+                   
+                    
                 };
                 Founditems.Add(b);
                 var itemToRemove = Availableitems.Single(r => r.CompName == dataGridView1.Rows[index].Cells[1].Value.ToString());
@@ -702,11 +706,22 @@ namespace SMTsetup
         }
         private void addToXML()
         {
+
             List<BomItem> FounditemstoXml = Founditems;
-            string s= SerializeToXml(FounditemstoXml);
-           // string s = "<xml><foo></foo></xml>";
+            List<BomItem> AvailableitemstoXml = Availableitems;
+
+            List<BomItem> allData = new List<BomItem>();
+
+            allData.AddRange(Founditems);
+            allData.AddRange(Availableitems);
+
+            string s= SerializeToXml(allData);
+
+           
+            // string s = "<xml><foo></foo></xml>";
             XmlDocument xdoc = new XmlDocument();
             xdoc.LoadXml(s);
+            
             string theLogFileName = loadedDirNameCSPS + ".log";
             xdoc.Save(theLogFileName);
 
@@ -734,6 +749,11 @@ namespace SMTsetup
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
         {
           
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
