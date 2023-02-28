@@ -5,13 +5,10 @@ using Microsoft.Office.Interop.Excel;
 using System;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography.X509Certificates;
-
 namespace SMTsetup
 {
     internal static class Program
     {
-
-
         /// <summary>
         ///  The main entry point for the application.
         /// </summary>
@@ -22,8 +19,6 @@ namespace SMTsetup
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
             System.Windows.Forms.Application.Run(new SMTSetupMain());
-
-          
         }
     }
 }

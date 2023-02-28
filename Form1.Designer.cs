@@ -6,7 +6,6 @@
         ///  Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
-
         /// <summary>
         ///  Clean up any resources being used.
         /// </summary>
@@ -19,9 +18,7 @@
             }
             base.Dispose(disposing);
         }
-
         #region Windows Form Designer generated code
-
         /// <summary>
         ///  Required method for Designer support - do not modify
         ///  the contents of this method with the code editor.
@@ -35,7 +32,7 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel6 = new System.Windows.Forms.TableLayoutPanel();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnLoadFromLOGfile = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -132,7 +129,7 @@
             this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel6.Controls.Add(this.button1, 2, 0);
+            this.tableLayoutPanel6.Controls.Add(this.btnLoadFromLOGfile, 2, 0);
             this.tableLayoutPanel6.Controls.Add(this.button3, 0, 0);
             this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel6.Location = new System.Drawing.Point(3, 19);
@@ -142,19 +139,19 @@
             this.tableLayoutPanel6.Size = new System.Drawing.Size(1046, 40);
             this.tableLayoutPanel6.TabIndex = 3;
             // 
-            // button1
+            // btnLoadFromLOGfile
             // 
-            this.button1.BackgroundImage = global::SMTsetup.Properties.Resources.log;
-            this.button1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
-            this.button1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.button1.Location = new System.Drawing.Point(699, 3);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(344, 34);
-            this.button1.TabIndex = 2;
-            this.button1.Text = "LOAD from LOG file";
-            this.button1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnLoadFromLOGfile.BackgroundImage = global::SMTsetup.Properties.Resources.log;
+            this.btnLoadFromLOGfile.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
+            this.btnLoadFromLOGfile.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.btnLoadFromLOGfile.Location = new System.Drawing.Point(699, 3);
+            this.btnLoadFromLOGfile.Name = "btnLoadFromLOGfile";
+            this.btnLoadFromLOGfile.Size = new System.Drawing.Size(344, 34);
+            this.btnLoadFromLOGfile.TabIndex = 2;
+            this.btnLoadFromLOGfile.Text = "LOAD from LOG file";
+            this.btnLoadFromLOGfile.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnLoadFromLOGfile.UseVisualStyleBackColor = true;
+            this.btnLoadFromLOGfile.Click += new System.EventHandler(this.btnLoadFromLogFile_Click);
             // 
             // button3
             // 
@@ -422,7 +419,6 @@
             this.ResumeLayout(false);
 
         }
-
         #endregion
         private TableLayoutPanel tableLayoutPanel1;
         private GroupBox groupBox4;
@@ -445,7 +441,7 @@
         private ProgressBar progressBar1;
         private TableLayoutPanel tableLayoutPanel5;
         private ProgressBar progressBar2;
-        private Button button1;
+        private Button btnLoadFromLOGfile;
         private TableLayoutPanel tableLayoutPanel6;
         private FolderBrowserDialog folderBrowserDialog2;
         private OpenFileDialog openFileDialog2;

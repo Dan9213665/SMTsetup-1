@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Windows.Forms.DataFormats;
-
 namespace SMTsetup
 {
     public partial class frmLoadingScreen : Form
@@ -18,7 +17,5 @@ namespace SMTsetup
             InitializeComponent();
             //progressBar1.Value = FindForm("Form1").progressCounter;
         }
-
-        
     }
 }
