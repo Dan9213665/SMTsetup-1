@@ -19,6 +19,8 @@ using Font = System.Drawing.Font;
 using System.Reflection;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Reflection.Emit;
+
 namespace SMTsetup
 {
     public partial class SMTSetupMain : Form
@@ -56,6 +58,7 @@ namespace SMTsetup
         {
             //dataGridView1.DataSource = null;
             //dataGridView2.DataSource = null;
+            label2.Text = string.Empty;
             items.Clear();
             Availableitems.Clear();
             Founditems.Clear();
@@ -108,8 +111,6 @@ namespace SMTsetup
                                 while (reader.Read())
                                 {
                                     i += 1;
-                                    // this assumes just one column, and the value is text
-                                    //string value = reader[0].ToString();
                                     BomItem abc = new BomItem
                                     {
                                         SetNo = "M"+m + "-" + reader[0].ToString(),
@@ -126,9 +127,7 @@ namespace SMTsetup
                                     if (i > 4 && reader[0].ToString() != "")
                                     {
                                         items.Add(abc);
-                                        //countItems++;
                                     }
-                                    //values.Add(value);
                                 }
                             }
                             conn.Close();
@@ -278,7 +277,7 @@ namespace SMTsetup
                     CompName = dataGridView1.Rows[index].Cells[dataGridView1.Columns["CompName"].DisplayIndex].Value.ToString(),
                     Comments = dataGridView1.Rows[index].Cells[dataGridView1.Columns["Comments"].DisplayIndex].Value.ToString(),
                     FdrType = dataGridView1.Rows[index].Cells[dataGridView1.Columns["FdrType"].DisplayIndex].Value.ToString(),
-                    PitchIndex = dataGridView1.Rows[index].Cells[dataGridView1.Columns["PitchIndex"].DisplayIndex].Value.ToString(),
+                    PitchIndex = dataGridView1.Rows[index].Cells[dataGridView1.Columns["PitchIndex"].DisplayIndex ].Value.ToString(),
                     FoundTheItem = true
                 };
                 Founditems.Add(b);
@@ -327,7 +326,9 @@ namespace SMTsetup
                 }
                 catch (Exception)
                 {
-                    MessageBox.Show(textBox1.Text + " Not found in AVALIABLE ITEMS list");
+                    //MessageBox.Show(textBox1.Text + " Not found in AVALIABLE ITEMS list");
+                    label2.Text = textBox1.Text + " Not found in AVALIABLE ITEMS list";
+                    label2.BackColor = Color.Red;
                     if (comboBox1.Text == "ENE_")
                     {
                         AlreadyFoundLogic(comboBox1.Text + textBox1.Text);
@@ -355,9 +356,11 @@ namespace SMTsetup
             {
                 foreach (DataGridViewRow row in dataGridView2.Rows)
                 {
-                    if (row.Cells[dataGridView1.Columns["CompName"].DisplayIndex].Value.ToString().Equals(searchValue))
+                    if (row.Cells[dataGridView2.Columns["CompName"].DisplayIndex].Value.ToString().Equals(searchValue))
                     {
-                        MessageBox.Show(searchValue + " already exists in the FOUND ITEMS list !");
+                        //MessageBox.Show(searchValue + " already exists in the FOUND ITEMS list !");
+                        label2.Text = searchValue + " already exists in the FOUND ITEMS list !";
+                        label2.BackColor = Color.Red;
                         row.Selected = true;
                         dataGridView2.CurrentCell = dataGridView2.Rows[row.Index].Cells[dataGridView1.Columns["CompName"].DisplayIndex];
                         string pr = dataGridView2.Rows[row.Index].Cells[dataGridView1.Columns["SetNo"].DisplayIndex].Value.ToString();
@@ -370,7 +373,7 @@ namespace SMTsetup
                         };
                         try
                         {
-                            p.Print();
+                            //p.Print();
                         }
                         catch (Exception ex)
                         {
@@ -509,6 +512,7 @@ namespace SMTsetup
         }
         private void btnLoadFromLogFile_Click(object sender, EventArgs e)
         {
+            label2.Text = string.Empty;
             items.Clear();
             Availableitems.Clear();
             Founditems.Clear();
