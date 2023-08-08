@@ -1,5 +1,4 @@
 using FastMember;
-using Microsoft.Office.Interop.Excel;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -40,11 +39,11 @@ namespace SMTsetup
         public SMTSetupMain()
         {
             InitializeComponent();
-            progressBar1.Minimum= 0;
-            progressBar2.Minimum= 0;
+            progressBar1.Minimum = 0;
+            progressBar2.Minimum = 0;
             progressBar2.Value = 0;
             textBox1.Enabled = false;
-            comboBox1.SelectedIndex= 0;
+            comboBox1.SelectedIndex = 0;
             DateTime fileModifiedDate = File.GetLastWriteTime(@"SMTsetup.exe");
             this.Text = "SMT setup Updated " + fileModifiedDate.ToString(); ;
         }
@@ -53,6 +52,19 @@ namespace SMTsetup
         }
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
+        }
+        private async void Blink()
+        {
+            //while (true)
+            for (int i = 0; i < 5; i++)
+            {
+                await Task.Delay(500);
+                label2.ForeColor = Color.Black;
+                label2.BackColor = Color.Yellow;
+                await Task.Delay(500);
+                label2.ForeColor = Color.White;
+                label2.BackColor = Color.Red;
+            }
         }
         private void button3_Click(object sender, EventArgs e)
         {
@@ -90,8 +102,8 @@ namespace SMTsetup
                     string thesheetName = (System.IO.Path.GetFileNameWithoutExtension(file)).ToString();
                     //MessageBox.Show(thesheetName);
                     m = thesheetName.Substring(thesheetName.Length - 1);
-                    label1.Text += file+"\n";
-                    groupBox2.Text += file+" ";
+                    label1.Text += file + "\n";
+                    groupBox2.Text += file + " ";
                     try
                     {
                         //string text = File.ReadAllText(file);
@@ -113,12 +125,12 @@ namespace SMTsetup
                                     i += 1;
                                     BomItem abc = new BomItem
                                     {
-                                        SetNo = "M"+m + "-" + reader[0].ToString(),
+                                        SetNo = "M" + m + "-" + reader[0].ToString(),
                                         CompName = reader[1].ToString(),
                                         Comments = reader[2].ToString(),
                                         FdrType = reader[3].ToString(),
                                         PitchIndex = reader[4].ToString(),
-                                        FoundTheItem=false
+                                        FoundTheItem = false
                                     };
                                     if (i == 4)
                                     {
@@ -149,7 +161,7 @@ namespace SMTsetup
             }
             else
             {
-                 if (result == DialogResult.OK && Directory.EnumerateFiles(folderPath, "*.xlsx").Count() > 0)
+                if (result == DialogResult.OK && Directory.EnumerateFiles(folderPath, "*.xlsx").Count() > 0)
                 {
                     label1.Text = "";
                     groupBox2.Text = "";
@@ -228,11 +240,11 @@ namespace SMTsetup
                 Atable.Load(reader);
             }
             dataGridView1.DataSource = Atable.DefaultView;
-            groupBox3.Text = "Avaliable items : " + Availableitems.Count.ToString() + "/" + countItems.ToString();
+            groupBox3.Text = "Avaliable items : " + Availableitems.Count.ToString() + "/" + (Availableitems.Count + Founditems.Count).ToString();
             styleFormatter(dataGridView1);
             progressBar1.RightToLeftLayout = true;
             progressBar1.Style = ProgressBarStyle.Blocks;
-            if(Availableitems.Count>=0)
+            if (Availableitems.Count >= 0)
             {
                 progressBar1.Value = Availableitems.Count;
             }
@@ -255,7 +267,7 @@ namespace SMTsetup
         }
         private void RepopulateFoundTable()
         {
-            progressBar2.Maximum = Founditems.Count;
+            progressBar2.Maximum = Availableitems.Count + Founditems.Count;
             Ftable.Clear();
             IEnumerable<BomItem> data = Founditems;
             using (var reader = ObjectReader.Create(data))
@@ -263,7 +275,7 @@ namespace SMTsetup
                 Ftable.Load(reader);
             }
             dataGridView2.DataSource = Ftable.DefaultView;
-            groupBox5.Text = "Found items : " + Founditems.Count.ToString() + "/" + countItems.ToString();
+            groupBox5.Text = "Found items : " + Founditems.Count.ToString() + "/" + (Availableitems.Count + Founditems.Count).ToString();
             styleFormatter(dataGridView2);
             progressBar2.Value = Founditems.Count;
         }
@@ -273,15 +285,16 @@ namespace SMTsetup
             {
                 BomItem b = new BomItem
                 {
-                    SetNo = dataGridView1.Rows[index].Cells[dataGridView1.Columns["SetNo"].DisplayIndex].Value.ToString(),
-                    CompName = dataGridView1.Rows[index].Cells[dataGridView1.Columns["CompName"].DisplayIndex].Value.ToString(),
-                    Comments = dataGridView1.Rows[index].Cells[dataGridView1.Columns["Comments"].DisplayIndex].Value.ToString(),
-                    FdrType = dataGridView1.Rows[index].Cells[dataGridView1.Columns["FdrType"].DisplayIndex].Value.ToString(),
-                    PitchIndex = dataGridView1.Rows[index].Cells[dataGridView1.Columns["PitchIndex"].DisplayIndex ].Value.ToString(),
+                    SetNo = dataGridView1.Rows[index].Cells[dataGridView1.Columns["SetNo"].DisplayIndex + 1].Value.ToString(),
+                    CompName = dataGridView1.Rows[index].Cells[dataGridView1.Columns["CompName"].DisplayIndex + 1].Value.ToString(),
+                    Comments = dataGridView1.Rows[index].Cells[dataGridView1.Columns["Comments"].DisplayIndex + 1].Value.ToString(),
+                    FdrType = dataGridView1.Rows[index].Cells[dataGridView1.Columns["FdrType"].DisplayIndex + 1].Value.ToString(),
+                    PitchIndex = dataGridView1.Rows[index].Cells[dataGridView1.Columns["PitchIndex"].DisplayIndex + 1].Value.ToString(),
                     FoundTheItem = true
                 };
+                //MessageBox.Show(dataGridView1.Rows[index].Cells[dataGridView1.Columns["SetNo"].DisplayIndex+1].Value.ToString());
                 Founditems.Add(b);
-                var itemToRemove = Availableitems.Single(r => r.CompName == dataGridView1.Rows[index].Cells[dataGridView1.Columns["CompName"].DisplayIndex].Value.ToString());
+                var itemToRemove = Availableitems.Single(r => r.CompName == dataGridView1.Rows[index].Cells[dataGridView1.Columns["CompName"].DisplayIndex + 1].Value.ToString());
                 Availableitems.Remove(itemToRemove);
                 SendToPrint(itemToRemove);
                 RepopulateFoundTable();
@@ -295,11 +308,11 @@ namespace SMTsetup
         }
         private void textBox1_TextChanged_1(object sender, EventArgs e)
         {
-            if(comboBox1.Text=="ENE_")
+            if (comboBox1.Text == "ENE_")
             {
                 FilterAvaliableGW(comboBox1.Text + textBox1.Text);
             }
-            else if(comboBox1.Text == "---_" && textBox1.Text.Length>14)
+            else if (comboBox1.Text == "---_" && textBox1.Text.Length > 14)
             {
                 FilterAvaliableGW(textBox1.Text.Substring(4));
             }
@@ -317,7 +330,7 @@ namespace SMTsetup
         }
         private void textBox1_KeyDown_1(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter && textBox1.Text != string.Empty)
+            if (e.KeyCode == Keys.Enter && textBox1.Text != "")
             {
                 dataGridView2.ClearSelection();
                 try
@@ -326,9 +339,9 @@ namespace SMTsetup
                 }
                 catch (Exception)
                 {
-                    //MessageBox.Show(textBox1.Text + " Not found in AVALIABLE ITEMS list");
                     label2.Text = textBox1.Text + " Not found in AVALIABLE ITEMS list";
                     label2.BackColor = Color.Red;
+                    Blink();
                     if (comboBox1.Text == "ENE_")
                     {
                         AlreadyFoundLogic(comboBox1.Text + textBox1.Text);
@@ -356,14 +369,14 @@ namespace SMTsetup
             {
                 foreach (DataGridViewRow row in dataGridView2.Rows)
                 {
-                    if (row.Cells[dataGridView2.Columns["CompName"].DisplayIndex].Value.ToString().Equals(searchValue))
+                    if (row.Cells[dataGridView2.Columns["CompName"].DisplayIndex + 1].Value.ToString().Equals(searchValue))
                     {
-                        //MessageBox.Show(searchValue + " already exists in the FOUND ITEMS list !");
                         label2.Text = searchValue + " already exists in the FOUND ITEMS list !";
                         label2.BackColor = Color.Red;
+                        Blink();
                         row.Selected = true;
-                        dataGridView2.CurrentCell = dataGridView2.Rows[row.Index].Cells[dataGridView1.Columns["CompName"].DisplayIndex];
-                        string pr = dataGridView2.Rows[row.Index].Cells[dataGridView1.Columns["SetNo"].DisplayIndex].Value.ToString();
+                        dataGridView2.CurrentCell = dataGridView2.Rows[row.Index].Cells[dataGridView1.Columns["CompName"].DisplayIndex + 1];
+                        string pr = dataGridView2.Rows[row.Index].Cells[dataGridView1.Columns["SetNo"].DisplayIndex + 1].Value.ToString();
                         PrintDocument p = new PrintDocument();
                         p.PrintPage += delegate (object sender1, PrintPageEventArgs e1)
                         {
@@ -373,7 +386,14 @@ namespace SMTsetup
                         };
                         try
                         {
-                            //p.Print();
+                            if (Environment.UserName == "lgt")
+                            {
+                                //
+                            }
+                            else
+                            {
+                                p.Print();
+                            }
                         }
                         catch (Exception ex)
                         {
@@ -393,10 +413,10 @@ namespace SMTsetup
         {
             string s = itemToRemove.CompName.ToString() + " " + itemToRemove.SetNo.ToString();
             string pr = itemToRemove.SetNo.ToString();
-            textBox2.Text= s+" "+ DateTime.Now.ToString("HH:mm:ss");
+            textBox2.Text = s + " " + DateTime.Now.ToString("HH:mm:ss");
             if (itemToRemove.SetNo.StartsWith("M1-"))
-                {
-                textBox2.BackColor= Color.LightGreen;
+            {
+                textBox2.BackColor = Color.LightGreen;
             }
             else
             {
@@ -411,7 +431,15 @@ namespace SMTsetup
             };
             try
             {
-                //p.Print();
+                if (Environment.UserName == "lgt")
+                {
+                    //
+                }
+                else
+                {
+                    p.Print();
+                }
+
                 addToXML();
             }
             catch (Exception ex)
@@ -424,11 +452,12 @@ namespace SMTsetup
         }
         private void styleFormatter(DataGridView dgw)
         {
-            dgw.Columns["CompName"].DisplayIndex = 1;
-            dgw.Columns["Comments"].DisplayIndex = 2;
-            dgw.Columns["FdrType"].DisplayIndex = 3;
-            dgw.Columns["PitchIndex"].DisplayIndex =4;
-            dgw.Columns["SetNo"].DisplayIndex =5;
+            dgw.Columns["CompName"].DisplayIndex = 0;
+            dgw.Columns["Comments"].DisplayIndex = 1;
+            dgw.Columns["FdrType"].DisplayIndex = 2;
+            dgw.Columns["PitchIndex"].DisplayIndex = 3;
+            dgw.Columns["SetNo"].DisplayIndex = 4;
+            dgw.Columns["FoundTheItem"].DisplayIndex = 5;
             dgw.Columns["FoundTheItem"].Visible = false;
             dgw.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dgw.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -437,13 +466,12 @@ namespace SMTsetup
             dgw.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dgw.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dgw.AutoResizeColumns();
-            int setNoColIndex = dgw.Columns["SetNo"].DisplayIndex;
+            int setNoColIndex = dgw.Columns["SetNo"].DisplayIndex + 1;
             foreach (DataGridViewRow r in dgw.Rows)
             {
-                //MessageBox.Show(r.Cells[4].Value.ToString());
                 if (r.Cells[setNoColIndex].Value.ToString().StartsWith("M1"))
                 {
-                    dgw.Rows[r.Index].Cells[setNoColIndex].Style.BackColor =  Color.LightGreen;
+                    dgw.Rows[r.Index].Cells[setNoColIndex].Style.BackColor = Color.LightGreen;
                 }
                 else if (r.Cells[setNoColIndex].Value.ToString().StartsWith("M2"))
                 {
@@ -456,12 +484,26 @@ namespace SMTsetup
             List<BomItem> allData = new List<BomItem>();
             allData.AddRange(Founditems);
             allData.AddRange(Availableitems);
-            string s= SerializeToXml(allData);
+            string s = SerializeToXml(allData);
             XmlDocument xdoc = new XmlDocument();
-            xdoc.LoadXml(s);
-            string theTimeStamp = DateTime.Now.ToString("_yyMMddHHmm");
+
+            string theTimeStamp = DateTime.Now.ToString("_yyMMdd");
             string theLogFileName = loadedDirNameCSPS + theTimeStamp + ".log";
-            xdoc.Save(theLogFileName);
+            try
+            {
+                xdoc.Load(theLogFileName);
+                xdoc.LoadXml(s);
+                xdoc.Save(theLogFileName);
+            }
+            catch (Exception)
+            {
+                xdoc.LoadXml(s);
+                xdoc.Save(theLogFileName);
+            }
+
+
+
+
         }
         private void loadFromXML()
         {
@@ -482,7 +524,7 @@ namespace SMTsetup
             }
             if (BomItemS != null && BomItemS.Count > 0)
             {
-                for (int i = 0; i < BomItemS.Count-1; i++)
+                for (int i = 0; i < BomItemS.Count; i++)
                 {
                     if (BomItemS[i].FoundTheItem == true)
                     {
