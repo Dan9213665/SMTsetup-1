@@ -308,11 +308,11 @@ namespace SMTsetup
         }
         private void textBox1_TextChanged_1(object sender, EventArgs e)
         {
-            if (comboBox1.Text == "ENE_")
-            {
-                FilterAvaliableGW(comboBox1.Text + textBox1.Text);
-            }
-            else if (comboBox1.Text == "---_" && textBox1.Text.Length > 14)
+            //if (comboBox1.Text == "ENE_")
+            //{
+            //    FilterAvaliableGW(comboBox1.Text + textBox1.Text);
+            //}
+            if (comboBox1.Text == "---_" && textBox1.Text.Length > 14)
             {
                 FilterAvaliableGW(textBox1.Text.Substring(4));
             }
@@ -342,11 +342,11 @@ namespace SMTsetup
                     label2.Text = textBox1.Text + " Not found in AVALIABLE ITEMS list";
                     label2.BackColor = Color.Red;
                     Blink();
-                    if (comboBox1.Text == "ENE_")
-                    {
-                        AlreadyFoundLogic(comboBox1.Text + textBox1.Text);
-                    }
-                    else if (comboBox1.Text == "---_" && textBox1.Text.Length > 14)
+                    //if (comboBox1.Text == "ENE_")
+                    //{
+                    //    AlreadyFoundLogic(comboBox1.Text + textBox1.Text);
+                    //}
+                    if (comboBox1.Text == "---_" && textBox1.Text.Length > 14)
                     {
                         AlreadyFoundLogic(textBox1.Text.Substring(4));
                     }
