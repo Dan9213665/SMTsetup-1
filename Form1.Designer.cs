@@ -348,6 +348,7 @@
             dataGridView2.RowTemplate.Height = 25;
             dataGridView2.Size = new Size(652, 411);
             dataGridView2.TabIndex = 0;
+            dataGridView2.CellMouseDoubleClick += dataGridView2_CellMouseDoubleClick;
             // 
             // progressBar2
             // 

@@ -456,7 +456,8 @@ namespace SMTsetup
                     //}
                     if (comboBox1.Text == "---_" && textBox1.Text.Length > 4)
                     {
-                        AlreadyFoundLogic(textBox1.Text.Substring(4));
+                        string cutof = textBox1.Text.Substring(4);
+                        AlreadyFoundLogic(cutof);
                     }
                     else
                     {
@@ -472,7 +473,10 @@ namespace SMTsetup
         }
         private void AlreadyFoundLogic(string searchValue)
         {
+
             dataGridView2.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+
+
             try
             {
                 foreach (DataGridViewRow row in dataGridView2.Rows)
@@ -541,7 +545,7 @@ namespace SMTsetup
             {
                 if (Environment.UserName == "lgt")
                 {
-                    //
+                    MessageBox.Show("Print OK");
                 }
                 else
                 {
@@ -826,13 +830,7 @@ namespace SMTsetup
     .Where(item => item.IPN == dataGridViewDetails.Rows[0].Cells[1].Value.ToString())
     .Sum(item => item.Stock);
 
-                        //lblBalance.Text = "Warehouse Balance: " + totalBalance.ToString();
 
-
-                        //// Set formatting properties
-                        //lblBalance.Dock = DockStyle.Fill;
-                        //lblBalance.Font = new Font("Arial", 15, FontStyle.Bold);
-                        //lblBalance.TextAlign = ContentAlignment.MiddleCenter;
 
                         lblBalance.Text = "Warehouse Balance: " + totalBalance.ToString();
 
@@ -860,9 +858,7 @@ namespace SMTsetup
                         }
                         SetSTOCKiewColumsOrder(dataGridViewWarehouseMovements);
 
-                        // Calculate the size of the form based on the DataGridView content and the GroupBox
-                        //int formWidth = dataGridViewDetails.Width + 20; // Add a margin
-                        //int formHeight = dataGridViewDetails.Height + 65; // Add a margin
+
 
                         // Set the size of the form
                         ipnDetailsForm.Size = new Size(1200, 900);
@@ -907,6 +903,7 @@ namespace SMTsetup
         }
         private void dataGridViewWarehouseMovementsDataLoader(string fp, string thesheetName)
         {
+            stockItems.Clear();
             try
             {
                 string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
@@ -1048,6 +1045,31 @@ namespace SMTsetup
                 if (control.Controls.Count > 0)
                 {
                     UpdateControlColors(control);
+                }
+            }
+        }
+
+        //private void dataGridView2_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        //{
+        //    itemToRemove= Founditems.FirstOrDefault(x => x.CompName==dataGridView2);
+        //    SendToPrint(itemToRemove);
+        //}
+        private void dataGridView2_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            // Check if the double-clicked cell is in the "CompName" column
+            if (e.ColumnIndex == dataGridView2.Columns["CompName"].Index && e.RowIndex >= 0)
+            {
+                // Get the value of the selected cell in the "CompName" column
+                string selectedCompName = dataGridView2.Rows[e.RowIndex].Cells["CompName"].Value.ToString();
+
+                // Find the itemToRemove based on the selectedCompName
+
+                BomItem itemToRemove = Founditems.FirstOrDefault(x => x.CompName == selectedCompName);
+
+                // Check if an item is found before sending it to print
+                if (itemToRemove != null)
+                {
+                    SendToPrint(itemToRemove);
                 }
             }
         }
