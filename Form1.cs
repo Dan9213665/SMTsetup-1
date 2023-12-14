@@ -215,6 +215,7 @@ namespace SMTsetup
                 RepopulateAvailableTable();
                 textBox1.Enabled = true;
                 textBox1.Focus();
+                SetTheClientLogo();
             }
             else
             {
@@ -280,6 +281,7 @@ namespace SMTsetup
                     RepopulateAvailableTable();
                     textBox1.Enabled = true;
                     textBox1.Focus();
+                    SetTheClientLogo();
                 }
                 else
                 {
@@ -311,7 +313,7 @@ namespace SMTsetup
             }
             dataGridView1.Update();
 
-            SetTheClientLogo();
+
 
         }
         private void SetTheClientLogo()
@@ -374,6 +376,7 @@ namespace SMTsetup
         }
         private void MoveItemFromAvaliableToFound(int index)
         {
+
             try
             {
                 BomItem b = new BomItem
@@ -402,9 +405,12 @@ namespace SMTsetup
         private void textBox1_TextChanged_1(object sender, EventArgs e)
         {
 
-            if (comboBox1.Text == "---_" && textBox1.Text.Length > 14)
+            if (comboBox1.Text == "---_" && textBox1.Text.Length >= 12)
             {
-                FilterAvaliableGW(textBox1.Text.Substring(4));
+
+                string result = textBox1.Text.Substring(4);
+                FilterAvaliableGW(result);
+
             }
             else
             {
@@ -416,6 +422,7 @@ namespace SMTsetup
             DataView dv = Atable.DefaultView;
             dv.RowFilter = "CompName LIKE '%" + searchString + "%'";
             dataGridView1.DataSource = dv;
+            dataGridView1.Refresh();
             styleFormatter(dataGridView1);
         }
         private void textBox1_KeyDown_1(object sender, KeyEventArgs e)
@@ -425,7 +432,18 @@ namespace SMTsetup
                 dataGridView2.ClearSelection();
                 try
                 {
-                    MoveItemFromAvaliableToFound(dataGridView1.CurrentCell.RowIndex);
+                    if (comboBox1.Text == "---_")
+                    {
+                        textBox1.Text.Substring(4);
+                        MoveItemFromAvaliableToFound(dataGridView1.CurrentCell.RowIndex);
+                    }
+                    else
+                    {
+                        MoveItemFromAvaliableToFound(dataGridView1.CurrentCell.RowIndex);
+                    }
+
+
+
                 }
                 catch (Exception)
                 {
@@ -436,7 +454,7 @@ namespace SMTsetup
                     //{
                     //    AlreadyFoundLogic(comboBox1.Text + textBox1.Text);
                     //}
-                    if (comboBox1.Text == "---_" && textBox1.Text.Length > 14)
+                    if (comboBox1.Text == "---_" && textBox1.Text.Length > 4)
                     {
                         AlreadyFoundLogic(textBox1.Text.Substring(4));
                     }
@@ -689,7 +707,7 @@ namespace SMTsetup
                         // Create a TableLayoutPanel to organize controls
                         TableLayoutPanel tableLayoutPanel = new TableLayoutPanel();
                         tableLayoutPanel.Dock = DockStyle.Fill;
-                        tableLayoutPanel.RowCount = 2; // Two rows
+                        tableLayoutPanel.RowCount = 3; // Two rows
                         ipnDetailsForm.Controls.Add(tableLayoutPanel);
 
                         // Create a GroupBox to contain the DataGridView
@@ -699,10 +717,16 @@ namespace SMTsetup
                         tableLayoutPanel.Controls.Add(groupBoxDetails, 0, 0); // First row
                         groupBoxDetails.Dock = DockStyle.Fill;
 
+                        Label lblBalance = new Label();
+                        lblBalance.Text = "BALANCE: ";
+
+                        tableLayoutPanel.Controls.Add(lblBalance, 0, 1);
+
+
 
                         GroupBox groupBoxWHmovements = new GroupBox();
                         groupBoxWHmovements.Text = "WAREHOUSE movements for IPN";
-                        tableLayoutPanel.Controls.Add(groupBoxWHmovements, 0, 1);
+                        tableLayoutPanel.Controls.Add(groupBoxWHmovements, 0, 2);
                         groupBoxWHmovements.Dock = DockStyle.Fill;
 
                         DataGridView dataGridViewWarehouseMovements = new DataGridView();
@@ -749,16 +773,16 @@ namespace SMTsetup
                         }
                         dataGridViewDetails.AutoResizeColumns();
                         // Add controls to the TableLayoutPanel
-                       
-                            foreach (ClientWarehouse w in WarehouseList)
+
+                        foreach (ClientWarehouse w in WarehouseList)
+                        {
+                            if (w != null && dataGridViewDetails.Rows[0].Cells[1].Value.ToString().StartsWith(w.clPrefix))
                             {
-                                if (w != null && dataGridViewDetails.Rows[0].Cells[1].Value.ToString().StartsWith(w.clPrefix))
-                                {
-                                    dataGridViewWarehouseMovementsDataLoader(w.clStockFile, "STOCK");
-                                    break;
-                                }
+                                dataGridViewWarehouseMovementsDataLoader(w.clStockFile, "STOCK");
+                                break;
                             }
-                        
+                        }
+
 
 
                         // dataGridViewWarehouseMovements.DataSource = stockItems.Select(x => x.IPN == dataGridViewDetails.Rows[0].Cells[1].Value.ToString()).ToList();
@@ -797,6 +821,39 @@ namespace SMTsetup
                         dv.RowFilter = "[IPN] LIKE '%" + dataGridViewDetails.Rows[0].Cells[1].Value.ToString() +
                             "%'";
                         dataGridViewWarehouseMovements.DataSource = dv;
+
+                        decimal totalBalance = stockItems
+    .Where(item => item.IPN == dataGridViewDetails.Rows[0].Cells[1].Value.ToString())
+    .Sum(item => item.Stock);
+
+                        //lblBalance.Text = "Warehouse Balance: " + totalBalance.ToString();
+
+
+                        //// Set formatting properties
+                        //lblBalance.Dock = DockStyle.Fill;
+                        //lblBalance.Font = new Font("Arial", 15, FontStyle.Bold);
+                        //lblBalance.TextAlign = ContentAlignment.MiddleCenter;
+
+                        lblBalance.Text = "Warehouse Balance: " + totalBalance.ToString();
+
+                        // Set formatting properties
+                        lblBalance.Dock = DockStyle.Fill;
+                        lblBalance.Font = new Font("Arial", 15, FontStyle.Bold);
+                        lblBalance.TextAlign = ContentAlignment.MiddleCenter;
+                        UpdateControlColors(ipnDetailsForm);
+                        // Set background color based on totalBalance
+                        if (totalBalance > 0)
+                        {
+                            lblBalance.BackColor = Color.LightGreen;
+                            lblBalance.ForeColor = Color.Black;
+                        }
+                        else
+                        {
+                            lblBalance.BackColor = Color.IndianRed;
+                            lblBalance.ForeColor = Color.White;
+                        }
+
+
                         foreach (DataGridViewColumn column in dataGridViewWarehouseMovements.Columns)
                         {
                             column.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
@@ -822,7 +879,7 @@ namespace SMTsetup
                     ipnDetailsForm.WindowState = FormWindowState.Maximized;
                     ipnDetailsForm.StartPosition = FormStartPosition.CenterScreen;
                     // Show the form
-                    UpdateControlColors(ipnDetailsForm);
+
                     ipnDetailsForm.ShowDialog();
                 }
             }
@@ -927,12 +984,12 @@ namespace SMTsetup
                     groupbox.ForeColor = Color.Black;
                 }
                 // Handle TextBox controls separately
-                if (control is TextBox textBox)
-                {
-                    textBox.BorderStyle = BorderStyle.FixedSingle; // Set border style to FixedSingle
-                    textBox.BackColor = Color.LightGray; // Change background color
-                    textBox.ForeColor = Color.Black; // Change text color
-                }
+                //if (control is TextBox textBox)
+                //{
+                //    textBox.BorderStyle = BorderStyle.FixedSingle; // Set border style to FixedSingle
+                //    textBox.BackColor = Color.LightGray; // Change background color
+                //    textBox.ForeColor = Color.Black; // Change text color
+                //}
                 // Handle Label controls separately
                 if (control is Label label)
                 {
