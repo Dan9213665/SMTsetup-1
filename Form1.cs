@@ -405,7 +405,7 @@ namespace SMTsetup
         private void textBox1_TextChanged_1(object sender, EventArgs e)
         {
 
-            if (comboBox1.Text == "---_" && textBox1.Text.Length >= 12)
+            if (comboBox1.Text == "---_" && textBox1.Text.Length > 8)
             {
 
                 string result = textBox1.Text.Substring(4);
@@ -451,7 +451,7 @@ namespace SMTsetup
                     label2.BackColor = Color.Red;
                     Blink();
 
-                    if (comboBox1.Text == "---_" && textBox1.Text.Length > 4)
+                    if (comboBox1.Text == "---_" && textBox1.Text.Length > 8)
                     {
                         string cutof = textBox1.Text.Substring(4);
                         AlreadyFoundLogic(cutof);
