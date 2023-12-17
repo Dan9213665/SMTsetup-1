@@ -450,10 +450,7 @@ namespace SMTsetup
                     label2.Text = textBox1.Text + " Not found in AVALIABLE ITEMS list";
                     label2.BackColor = Color.Red;
                     Blink();
-                    //if (comboBox1.Text == "ENE_")
-                    //{
-                    //    AlreadyFoundLogic(comboBox1.Text + textBox1.Text);
-                    //}
+
                     if (comboBox1.Text == "---_" && textBox1.Text.Length > 4)
                     {
                         string cutof = textBox1.Text.Substring(4);
@@ -473,9 +470,7 @@ namespace SMTsetup
         }
         private void AlreadyFoundLogic(string searchValue)
         {
-
             dataGridView2.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-
 
             try
             {
@@ -500,7 +495,7 @@ namespace SMTsetup
                         {
                             if (Environment.UserName == "lgt")
                             {
-                                //
+                                MessageBox.Show("Copy print OK");
                             }
                             else
                             {
@@ -788,10 +783,6 @@ namespace SMTsetup
                         }
 
 
-
-                        // dataGridViewWarehouseMovements.DataSource = stockItems.Select(x => x.IPN == dataGridViewDetails.Rows[0].Cells[1].Value.ToString()).ToList();
-                        // dataGridViewWarehouseMovements.Update();
-                        // Subscribe to the CellFormatting event
                         dataGridViewWarehouseMovements.CellFormatting += (sender, e) =>
                         {
                             // Check if the current column is the STOCK column
@@ -1041,6 +1032,7 @@ namespace SMTsetup
                     dateTimePicker.ForeColor = Color.White; // Change DateTimePicker text color
                                                             // Customize other DateTimePicker properties as needed
                 }
+                textBox1.BackColor = Color.Orange;
                 // Recursively update controls within containers
                 if (control.Controls.Count > 0)
                 {
@@ -1049,11 +1041,6 @@ namespace SMTsetup
             }
         }
 
-        //private void dataGridView2_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
-        //{
-        //    itemToRemove= Founditems.FirstOrDefault(x => x.CompName==dataGridView2);
-        //    SendToPrint(itemToRemove);
-        //}
         private void dataGridView2_CellMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
             // Check if the double-clicked cell is in the "CompName" column

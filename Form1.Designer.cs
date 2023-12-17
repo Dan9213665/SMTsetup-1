@@ -287,7 +287,7 @@
             comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBox1.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
             comboBox1.FormattingEnabled = true;
-            comboBox1.Items.AddRange(new object[] { "", "ENE_", "---_" });
+            comboBox1.Items.AddRange(new object[] { "", "---_" });
             comboBox1.Location = new Point(3, 3);
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(97, 38);
