@@ -415,7 +415,7 @@ namespace SMTsetup
             else if (comboBox1.Text == "CIS_" && textBox1.Text.Length > 8)
             {
 
-                string result = textBox1.Text.Substring(7);
+                string result = textBox1.Text.Replace("CIS_", "CIS_CIS");
                 FilterAvaliableGW(result);
 
             }
@@ -446,7 +446,7 @@ namespace SMTsetup
                     }
                     else if (comboBox1.Text == "CIS_")
                     {
-                        textBox1.Text.Substring(7);
+                        textBox1.Text.Replace("CIS_", "CIS_CIS");
                         MoveItemFromAvaliableToFound(dataGridView1.CurrentCell.RowIndex);
                     }
                     else
@@ -470,7 +470,7 @@ namespace SMTsetup
                     }
                     else if (comboBox1.Text == "CIS_" && textBox1.Text.Length > 8)
                     {
-                        string cutof = textBox1.Text.Substring(7);
+                        string cutof = textBox1.Text.Replace("CIS_", "CIS_CIS");
                         AlreadyFoundLogic(cutof);
                     }
                     else
