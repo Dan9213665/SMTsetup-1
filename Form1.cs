@@ -412,6 +412,13 @@ namespace SMTsetup
                 FilterAvaliableGW(result);
 
             }
+            else if (comboBox1.Text == "CIS_" && textBox1.Text.Length > 8)
+            {
+
+                string result = textBox1.Text.Substring(7);
+                FilterAvaliableGW(result);
+
+            }
             else
             {
                 FilterAvaliableGW(textBox1.Text);
@@ -437,6 +444,11 @@ namespace SMTsetup
                         textBox1.Text.Substring(4);
                         MoveItemFromAvaliableToFound(dataGridView1.CurrentCell.RowIndex);
                     }
+                    else if (comboBox1.Text == "CIS_")
+                    {
+                        textBox1.Text.Substring(7);
+                        MoveItemFromAvaliableToFound(dataGridView1.CurrentCell.RowIndex);
+                    }
                     else
                     {
                         MoveItemFromAvaliableToFound(dataGridView1.CurrentCell.RowIndex);
@@ -454,6 +466,11 @@ namespace SMTsetup
                     if (comboBox1.Text == "---_" && textBox1.Text.Length > 8)
                     {
                         string cutof = textBox1.Text.Substring(4);
+                        AlreadyFoundLogic(cutof);
+                    }
+                    else if (comboBox1.Text == "CIS_" && textBox1.Text.Length > 8)
+                    {
+                        string cutof = textBox1.Text.Substring(7);
                         AlreadyFoundLogic(cutof);
                     }
                     else
