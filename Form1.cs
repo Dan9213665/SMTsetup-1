@@ -28,6 +28,8 @@ using System.ComponentModel;
 using TextBox = System.Windows.Forms.TextBox;
 using ComboBox = System.Windows.Forms.ComboBox;
 using Button = System.Windows.Forms.Button;
+using System.Xml.Linq;
+using System.Data.SqlClient;
 
 namespace SMTsetup
 {
@@ -92,7 +94,7 @@ namespace SMTsetup
                 string clAvlFile = Directory.GetFiles(subDir, "*_AVL.XLSM").FirstOrDefault();
                 string clStockFile = Directory.GetFiles(subDir, "*_STOCK.XLSM").FirstOrDefault();
                 string clLogoFile = Directory.GetFiles(subDir, "logo.png").FirstOrDefault();
-                if (!string.IsNullOrEmpty(clAvlFile) && !string.IsNullOrEmpty(clStockFile))
+                if (!string.IsNullOrEmpty(clName) && !string.IsNullOrEmpty(clPrefix))
                 {
                     ClientWarehouse warehouse = new ClientWarehouse
                     {
@@ -794,7 +796,7 @@ namespace SMTsetup
                         {
                             if (w != null && dataGridViewDetails.Rows[0].Cells[1].Value.ToString().StartsWith(w.clPrefix))
                             {
-                                dataGridViewWarehouseMovementsDataLoader(w.clStockFile, "STOCK");
+                                dataGridViewWarehouseMovementsDataLoader(w.clName, dataGridView1.Rows[currentRow].Cells[1].Value.ToString());
                                 break;
                             }
                         }
@@ -909,17 +911,86 @@ namespace SMTsetup
             dgw.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dgw.Sort(dgw.Columns["UpdatedOn"], ListSortDirection.Descending);
         }
-        private void dataGridViewWarehouseMovementsDataLoader(string fp, string thesheetName)
+        //private void dataGridViewWarehouseMovementsDataLoader(string clName, string IPNtoSearchFor)
+        //{
+        //    stockItems.Clear();
+        //    try
+        //    {
+        //        string constr = $"Data Source=RT12\\SQLEXPRESS;Initial Catalog={clName}.dbo.STOCK;Integrated Security=True;";
+        //        //string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
+        //        using (OleDbConnection conn = new OleDbConnection(constr))
+        //        {
+        //            conn.Open();
+
+        //            OleDbCommand command = new OleDbCommand("Select * from [" + thesheetName + "$]", conn);
+        //            OleDbDataReader reader = command.ExecuteReader();
+        //            if (reader.HasRows)
+        //            {
+        //                while (reader.Read())
+        //                {
+        //                    try
+        //                    {
+        //                        int res = 0;
+        //                        int toStk;
+        //                        bool stk = int.TryParse(reader[4].ToString(), out res);
+        //                        if (stk)
+        //                        {
+        //                            toStk = res;
+        //                        }
+        //                        else
+        //                        {
+        //                            toStk = 0;
+        //                        }
+        //                        WHitem abc = new WHitem
+        //                        {
+        //                            IPN = reader[0].ToString(),
+        //                            Manufacturer = reader[1].ToString(),
+        //                            MFPN = reader[2].ToString(),
+        //                            Description = reader[3].ToString(),
+        //                            Stock = toStk,
+        //                            UpdatedOn = reader[5].ToString(),
+        //                            ReelBagTrayStick = reader[6].ToString(),
+        //                            SourceRequester = reader[7].ToString()
+        //                        };
+
+
+        //                        stockItems.Add(abc);
+
+        //                    }
+        //                    catch (Exception E)
+        //                    {
+        //                        MessageBox.Show(E.Message);
+        //                        throw;
+        //                    }
+        //                }
+        //            }
+        //            conn.Close();
+        //        }
+        //    }
+        //    catch (IOException)
+        //    {
+        //        MessageBox.Show("Error");
+        //    }
+        //}
+
+        private void dataGridViewWarehouseMovementsDataLoader(string clName, string thIpntoSearchFor)
         {
+            //MessageBox.Show("clName:" + clName + " thIpntoSearchFor:" + thIpntoSearchFor);
             stockItems.Clear();
             try
             {
-                string constr = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fp + "; Extended Properties=\"Excel 12.0 Macro;HDR=YES;IMEX=0\"";
-                using (OleDbConnection conn = new OleDbConnection(constr))
+                // Construct the connection string for SQL Server
+                string constr = $"Data Source=RT12\\SQLEXPRESS;Initial Catalog={clName};Integrated Security=True;";
+
+                using (SqlConnection conn = new SqlConnection(constr))
                 {
                     conn.Open();
-                    OleDbCommand command = new OleDbCommand("Select * from [" + thesheetName + "$]", conn);
-                    OleDbDataReader reader = command.ExecuteReader();
+
+                    // Query to select data from the STOCK table in the specified database
+                    string query = $"SELECT * FROM {clName}.dbo.STOCK WHERE IPN='{thIpntoSearchFor}'";
+                    SqlCommand command = new SqlCommand(query, conn);
+                    SqlDataReader reader = command.ExecuteReader();
+
                     if (reader.HasRows)
                     {
                         while (reader.Read())
@@ -928,7 +999,7 @@ namespace SMTsetup
                             {
                                 int res = 0;
                                 int toStk;
-                                bool stk = int.TryParse(reader[4].ToString(), out res);
+                                bool stk = int.TryParse(reader["Stock"].ToString(), out res); // Adjust "StockColumnName" to your actual column name
                                 if (stk)
                                 {
                                     toStk = res;
@@ -939,19 +1010,17 @@ namespace SMTsetup
                                 }
                                 WHitem abc = new WHitem
                                 {
-                                    IPN = reader[0].ToString(),
-                                    Manufacturer = reader[1].ToString(),
-                                    MFPN = reader[2].ToString(),
-                                    Description = reader[3].ToString(),
+                                    IPN = reader["IPN"].ToString(), // Adjust "IPN" to your actual column name
+                                    Manufacturer = reader["Manufacturer"].ToString(), // Adjust "Manufacturer" to your actual column name
+                                    MFPN = reader["MFPN"].ToString(), // Adjust "MFPN" to your actual column name
+                                    Description = reader["Description"].ToString(), // Adjust "Description" to your actual column name
                                     Stock = toStk,
-                                    UpdatedOn = reader[5].ToString(),
-                                    ReelBagTrayStick = reader[6].ToString(),
-                                    SourceRequester = reader[7].ToString()
+                                    UpdatedOn = reader["Updated_on"].ToString(), // Adjust "UpdatedOn" to your actual column name
+                                    ReelBagTrayStick = reader["Comments"].ToString(), // Adjust "ReelBagTrayStick" to your actual column name
+                                    SourceRequester = reader["Source_Requester"].ToString() // Adjust "SourceRequester" to your actual column name
                                 };
 
-
                                 stockItems.Add(abc);
-
                             }
                             catch (Exception E)
                             {
@@ -968,6 +1037,7 @@ namespace SMTsetup
                 MessageBox.Show("Error");
             }
         }
+
         private void UpdateControlColors(Control parentControl)
         {
             foreach (Control control in parentControl.Controls)
