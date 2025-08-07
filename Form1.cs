@@ -468,7 +468,7 @@ namespace SMTsetup
                     if (comboBox1.Text == "---_" && textBox1.Text.Length > 8)
                     {
                         string cutof = textBox1.Text.Substring(4);
-                        AlreadyFoundLogic(cutof);
+                        AlreadyFoundLogic(cutof,true);
                     }
                     else if (comboBox1.Text == "CIS_" && textBox1.Text.Length > 8)
                     {
@@ -487,9 +487,56 @@ namespace SMTsetup
                 }
             }
         }
-        private void AlreadyFoundLogic(string searchValue)
+        private void AlreadyFoundLogic(string searchValue, bool partial = false)
         {
             dataGridView2.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+
+            if (partial) {
+
+                try
+                {
+                    foreach (DataGridViewRow row in dataGridView2.Rows)
+                    {
+                        if (row.Cells[dataGridView2.Columns["CompName"].DisplayIndex + 1].Value.ToString().Contains(searchValue))
+                        {
+                            label2.Text = searchValue + " already exists in the FOUND ITEMS list !";
+                            label2.BackColor = Color.Red;
+                            Blink();
+                            row.Selected = true;
+                            dataGridView2.CurrentCell = dataGridView2.Rows[row.Index].Cells[dataGridView1.Columns["CompName"].DisplayIndex + 1];
+                            string pr = dataGridView2.Rows[row.Index].Cells[dataGridView1.Columns["SetNo"].DisplayIndex + 1].Value.ToString();
+                            PrintDocument p = new PrintDocument();
+                            p.PrintPage += delegate (object sender1, PrintPageEventArgs e1)
+                            {
+                                Margins margins = new Margins(0, 0, 0, 0);
+                                p.DefaultPageSettings.Margins = margins;
+                                e1.Graphics.DrawString(pr, new Font("Arial", 14, FontStyle.Bold), new SolidBrush(Color.Black), new RectangleF(5, 5, 170, 90));
+                            };
+                            try
+                            {
+                                if (Environment.UserName == "lgt")
+                                {
+                                    MessageBox.Show("Copy print OK");
+                                }
+                                else
+                                {
+                                    p.Print();
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                throw new Exception("Exception Occured While Printing", ex);
+                            }
+                            break;
+                        }
+                    }
+                }
+                catch (Exception exc)
+                {
+                    MessageBox.Show(exc.Message);
+                }
+
+            }
 
             try
             {
