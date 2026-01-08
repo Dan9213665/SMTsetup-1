@@ -54,6 +54,7 @@ namespace SMTsetup
         string loadedDirNameCSPS = string.Empty;
 
         public int KITqty { get; set; } =1;
+        public int BoardsOnPcb { get; set; } = 1;
         public SMTSetupMain()
         {
             InitializeComponent();
@@ -167,6 +168,19 @@ namespace SMTsetup
                     {
                         KITqty = kit;
                     }
+
+                    string inputBoardsOnPCB = Microsoft.VisualBasic.Interaction.InputBox(
+                       "Enter quantity PCBs on BOARD :", "PCBs on BOARD Quantity", "1");
+
+                    if (!int.TryParse(inputBoardsOnPCB, out int boardsOnPCb))
+                    {
+                        MessageBox.Show("Invalid PCBs on BOARD quantity, using 1 as default.");
+                        BoardsOnPcb = 1;
+                    }
+                    else
+                    {
+                        BoardsOnPcb = boardsOnPCb;
+                    }
                 }
 
                 label1.Text = "";
@@ -208,7 +222,7 @@ namespace SMTsetup
                                     int _total=-1;
                                     if (int.TryParse(reader[7].ToString(), out int parsedTotal))
                                     {
-                                        _total = parsedTotal*KITqty;
+                                        _total = (parsedTotal/BoardsOnPcb)*KITqty;
                                     }
                                     else
                                     {
