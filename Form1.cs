@@ -758,6 +758,7 @@ namespace SMTsetup
                         // Already sufficient
                         label2.Text = scannedText + " already found with sufficient quantity";
                         label2.BackColor = Color.Yellow;
+                        FocusFoundItemRow(scannedText);
                         Blink();
                     }
                 }
@@ -771,6 +772,31 @@ namespace SMTsetup
             //styleFormatter(dataGridView1);
             RepopulateAvailableTable();
             RepopulateFoundTable();
+        }
+
+
+        private void FocusFoundItemRow(string compName)
+        {
+            foreach (DataGridViewRow row in dataGridView2.Rows)
+            {
+                if (row.IsNewRow) continue;
+
+                var cellValue = row.Cells["CompName"].Value?.ToString();
+                if (cellValue == compName)
+                {
+                    dataGridView2.ClearSelection();
+
+                    row.Selected = true;
+                    dataGridView2.CurrentCell = row.Cells["CompName"];
+
+                    // Scroll into view
+                    dataGridView2.FirstDisplayedScrollingRowIndex = row.Index;
+                    
+                    SendToPrint(Founditems.First(i => i.CompName == compName));
+
+                    return;
+                }
+            }
         }
 
         private void AlreadyFoundLogic(string searchValue, bool partial = false)
