@@ -89,11 +89,13 @@
             dataGridView1.Dock = DockStyle.Fill;
             dataGridView1.GridColor = Color.FromArgb(224, 224, 224);
             dataGridView1.ImeMode = ImeMode.On;
-            dataGridView1.Location = new Point(3, 32);
+            dataGridView1.Location = new Point(3, 43);
+            dataGridView1.Margin = new Padding(3, 4, 3, 4);
             dataGridView1.Name = "dataGridView1";
             dataGridView1.ReadOnly = true;
+            dataGridView1.RowHeadersWidth = 51;
             dataGridView1.RowTemplate.Height = 25;
-            dataGridView1.Size = new Size(651, 411);
+            dataGridView1.Size = new Size(748, 552);
             dataGridView1.TabIndex = 0;
             dataGridView1.CellMouseDown += dataGridView1_CellMouseDown;
             // 
@@ -105,25 +107,28 @@
             tableLayoutPanel1.Controls.Add(groupBox1, 0, 1);
             tableLayoutPanel1.Dock = DockStyle.Fill;
             tableLayoutPanel1.Location = new Point(0, 0);
+            tableLayoutPanel1.Margin = new Padding(3, 4, 3, 4);
             tableLayoutPanel1.Name = "tableLayoutPanel1";
             tableLayoutPanel1.RowCount = 2;
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
             tableLayoutPanel1.RowStyles.Add(new RowStyle());
-            tableLayoutPanel1.Size = new Size(1351, 629);
+            tableLayoutPanel1.Size = new Size(1544, 839);
             tableLayoutPanel1.TabIndex = 3;
             // 
             // groupBox4
             // 
             groupBox4.AutoSize = true;
-            groupBox4.BackColor = Color.White;
+            groupBox4.BackColor = Color.Silver;
             groupBox4.BackgroundImage = Properties.Resources.ROBOTRON_LOGO;
             groupBox4.BackgroundImageLayout = ImageLayout.Stretch;
             groupBox4.Controls.Add(tableLayoutPanel6);
             groupBox4.Controls.Add(label1);
             groupBox4.Dock = DockStyle.Fill;
-            groupBox4.Location = new Point(3, 3);
+            groupBox4.Location = new Point(3, 4);
+            groupBox4.Margin = new Padding(3, 4, 3, 4);
             groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(1345, 62);
+            groupBox4.Padding = new Padding(3, 4, 3, 4);
+            groupBox4.Size = new Size(1538, 81);
             groupBox4.TabIndex = 3;
             groupBox4.TabStop = false;
             groupBox4.Text = "Open FOLDER CS/PS";
@@ -140,11 +145,12 @@
             tableLayoutPanel6.Controls.Add(button3, 0, 0);
             tableLayoutPanel6.Controls.Add(label2, 1, 0);
             tableLayoutPanel6.Dock = DockStyle.Fill;
-            tableLayoutPanel6.Location = new Point(3, 19);
+            tableLayoutPanel6.Location = new Point(3, 24);
+            tableLayoutPanel6.Margin = new Padding(3, 4, 3, 4);
             tableLayoutPanel6.Name = "tableLayoutPanel6";
             tableLayoutPanel6.RowCount = 1;
             tableLayoutPanel6.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel6.Size = new Size(1339, 40);
+            tableLayoutPanel6.Size = new Size(1532, 53);
             tableLayoutPanel6.TabIndex = 3;
             // 
             // btnLoadFromLOGfile
@@ -152,9 +158,10 @@
             btnLoadFromLOGfile.BackgroundImage = Properties.Resources.log;
             btnLoadFromLOGfile.BackgroundImageLayout = ImageLayout.Zoom;
             btnLoadFromLOGfile.Dock = DockStyle.Fill;
-            btnLoadFromLOGfile.Location = new Point(895, 3);
+            btnLoadFromLOGfile.Location = new Point(1023, 4);
+            btnLoadFromLOGfile.Margin = new Padding(3, 4, 3, 4);
             btnLoadFromLOGfile.Name = "btnLoadFromLOGfile";
-            btnLoadFromLOGfile.Size = new Size(441, 34);
+            btnLoadFromLOGfile.Size = new Size(506, 45);
             btnLoadFromLOGfile.TabIndex = 2;
             btnLoadFromLOGfile.Text = "LOAD from LOG file";
             btnLoadFromLOGfile.TextAlign = ContentAlignment.MiddleLeft;
@@ -166,9 +173,10 @@
             button3.BackgroundImage = (Image)resources.GetObject("button3.BackgroundImage");
             button3.BackgroundImageLayout = ImageLayout.Zoom;
             button3.Dock = DockStyle.Fill;
-            button3.Location = new Point(3, 3);
+            button3.Location = new Point(3, 4);
+            button3.Margin = new Padding(3, 4, 3, 4);
             button3.Name = "button3";
-            button3.Size = new Size(440, 34);
+            button3.Size = new Size(504, 45);
             button3.TabIndex = 0;
             button3.Text = "Browse to folder";
             button3.TextAlign = ContentAlignment.MiddleLeft;
@@ -181,28 +189,31 @@
             label2.Dock = DockStyle.Fill;
             label2.Font = new Font("Segoe UI", 18F, FontStyle.Bold, GraphicsUnit.Point);
             label2.ForeColor = Color.White;
-            label2.Location = new Point(449, 0);
+            label2.Location = new Point(513, 0);
             label2.Name = "label2";
-            label2.Size = new Size(440, 40);
+            label2.Size = new Size(504, 53);
             label2.TabIndex = 3;
             label2.TextAlign = ContentAlignment.BottomCenter;
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(166, 28);
+            label1.Location = new Point(190, 37);
             label1.Name = "label1";
-            label1.Size = new Size(0, 15);
+            label1.Size = new Size(0, 20);
             label1.TabIndex = 1;
             // 
             // groupBox1
             // 
             groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             groupBox1.AutoSize = true;
+            groupBox1.BackColor = Color.Silver;
             groupBox1.Controls.Add(tableLayoutPanel2);
-            groupBox1.Location = new Point(3, 71);
+            groupBox1.Location = new Point(3, 93);
+            groupBox1.Margin = new Padding(3, 4, 3, 4);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(1345, 555);
+            groupBox1.Padding = new Padding(3, 4, 3, 4);
+            groupBox1.Size = new Size(1538, 742);
             groupBox1.TabIndex = 4;
             groupBox1.TabStop = false;
             groupBox1.Text = "Loaded FILES";
@@ -216,12 +227,13 @@
             tableLayoutPanel2.Controls.Add(groupBox5, 1, 1);
             tableLayoutPanel2.Controls.Add(groupBox3, 0, 1);
             tableLayoutPanel2.Dock = DockStyle.Fill;
-            tableLayoutPanel2.Location = new Point(3, 19);
+            tableLayoutPanel2.Location = new Point(3, 24);
+            tableLayoutPanel2.Margin = new Padding(3, 4, 3, 4);
             tableLayoutPanel2.Name = "tableLayoutPanel2";
             tableLayoutPanel2.RowCount = 2;
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 11.17647F));
             tableLayoutPanel2.RowStyles.Add(new RowStyle(SizeType.Percent, 88.82353F));
-            tableLayoutPanel2.Size = new Size(1339, 533);
+            tableLayoutPanel2.Size = new Size(1532, 714);
             tableLayoutPanel2.TabIndex = 0;
             // 
             // groupBox2
@@ -230,9 +242,11 @@
             tableLayoutPanel2.SetColumnSpan(groupBox2, 2);
             groupBox2.Controls.Add(tableLayoutPanel3);
             groupBox2.Dock = DockStyle.Fill;
-            groupBox2.Location = new Point(3, 3);
+            groupBox2.Location = new Point(3, 4);
+            groupBox2.Margin = new Padding(3, 4, 3, 4);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(1333, 53);
+            groupBox2.Padding = new Padding(3, 4, 3, 4);
+            groupBox2.Size = new Size(1526, 71);
             groupBox2.TabIndex = 0;
             groupBox2.TabStop = false;
             groupBox2.Text = "Search IPN";
@@ -249,21 +263,23 @@
             tableLayoutPanel3.Controls.Add(comboBox1, 0, 0);
             tableLayoutPanel3.Controls.Add(pictureBox1, 1, 0);
             tableLayoutPanel3.Dock = DockStyle.Fill;
-            tableLayoutPanel3.Location = new Point(3, 19);
+            tableLayoutPanel3.Location = new Point(3, 24);
+            tableLayoutPanel3.Margin = new Padding(3, 4, 3, 4);
             tableLayoutPanel3.Name = "tableLayoutPanel3";
             tableLayoutPanel3.RowCount = 1;
             tableLayoutPanel3.RowStyles.Add(new RowStyle(SizeType.Percent, 100F));
-            tableLayoutPanel3.Size = new Size(1327, 31);
+            tableLayoutPanel3.Size = new Size(1520, 43);
             tableLayoutPanel3.TabIndex = 1;
             // 
             // textBox2
             // 
             textBox2.Dock = DockStyle.Fill;
             textBox2.Font = new Font("Segoe UI", 20.25F, FontStyle.Bold, GraphicsUnit.Point);
-            textBox2.Location = new Point(930, 3);
+            textBox2.Location = new Point(1067, 4);
+            textBox2.Margin = new Padding(3, 4, 3, 4);
             textBox2.Name = "textBox2";
             textBox2.ReadOnly = true;
-            textBox2.Size = new Size(394, 43);
+            textBox2.Size = new Size(450, 52);
             textBox2.TabIndex = 1;
             textBox2.TextAlign = HorizontalAlignment.Center;
             // 
@@ -272,10 +288,11 @@
             textBox1.BackColor = Color.FromArgb(255, 192, 128);
             textBox1.Dock = DockStyle.Fill;
             textBox1.Font = new Font("Segoe UI", 20.25F, FontStyle.Bold, GraphicsUnit.Point);
-            textBox1.Location = new Point(267, 3);
+            textBox1.Location = new Point(307, 4);
+            textBox1.Margin = new Padding(3, 4, 3, 4);
             textBox1.Name = "textBox1";
             textBox1.PlaceholderText = "Input IPN here";
-            textBox1.Size = new Size(657, 43);
+            textBox1.Size = new Size(754, 52);
             textBox1.TabIndex = 0;
             textBox1.TextAlign = HorizontalAlignment.Center;
             textBox1.TextChanged += textBox1_TextChanged_1;
@@ -287,17 +304,19 @@
             comboBox1.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point);
             comboBox1.FormattingEnabled = true;
             comboBox1.Items.AddRange(new object[] { "", "---_", "CIS_" });
-            comboBox1.Location = new Point(3, 3);
+            comboBox1.Location = new Point(3, 4);
+            comboBox1.Margin = new Padding(3, 4, 3, 4);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(97, 38);
+            comboBox1.Size = new Size(110, 44);
             comboBox1.TabIndex = 2;
             // 
             // pictureBox1
             // 
             pictureBox1.Dock = DockStyle.Fill;
-            pictureBox1.Location = new Point(135, 3);
+            pictureBox1.Location = new Point(155, 4);
+            pictureBox1.Margin = new Padding(3, 4, 3, 4);
             pictureBox1.Name = "pictureBox1";
-            pictureBox1.Size = new Size(126, 25);
+            pictureBox1.Size = new Size(146, 35);
             pictureBox1.TabIndex = 3;
             pictureBox1.TabStop = false;
             // 
@@ -305,9 +324,11 @@
             // 
             groupBox5.Controls.Add(tableLayoutPanel5);
             groupBox5.Dock = DockStyle.Fill;
-            groupBox5.Location = new Point(672, 62);
+            groupBox5.Location = new Point(769, 83);
+            groupBox5.Margin = new Padding(3, 4, 3, 4);
             groupBox5.Name = "groupBox5";
-            groupBox5.Size = new Size(664, 468);
+            groupBox5.Padding = new Padding(3, 4, 3, 4);
+            groupBox5.Size = new Size(760, 627);
             groupBox5.TabIndex = 3;
             groupBox5.TabStop = false;
             groupBox5.Text = "Found";
@@ -319,12 +340,13 @@
             tableLayoutPanel5.Controls.Add(dataGridView2, 0, 1);
             tableLayoutPanel5.Controls.Add(progressBar2, 0, 0);
             tableLayoutPanel5.Dock = DockStyle.Fill;
-            tableLayoutPanel5.Location = new Point(3, 19);
+            tableLayoutPanel5.Location = new Point(3, 24);
+            tableLayoutPanel5.Margin = new Padding(3, 4, 3, 4);
             tableLayoutPanel5.Name = "tableLayoutPanel5";
             tableLayoutPanel5.RowCount = 2;
             tableLayoutPanel5.RowStyles.Add(new RowStyle());
             tableLayoutPanel5.RowStyles.Add(new RowStyle());
-            tableLayoutPanel5.Size = new Size(658, 446);
+            tableLayoutPanel5.Size = new Size(754, 599);
             tableLayoutPanel5.TabIndex = 1;
             // 
             // dataGridView2
@@ -341,11 +363,13 @@
             dataGridViewCellStyle2.WrapMode = DataGridViewTriState.False;
             dataGridView2.DefaultCellStyle = dataGridViewCellStyle2;
             dataGridView2.Dock = DockStyle.Fill;
-            dataGridView2.Location = new Point(3, 32);
+            dataGridView2.Location = new Point(3, 43);
+            dataGridView2.Margin = new Padding(3, 4, 3, 4);
             dataGridView2.Name = "dataGridView2";
             dataGridView2.ReadOnly = true;
+            dataGridView2.RowHeadersWidth = 51;
             dataGridView2.RowTemplate.Height = 25;
-            dataGridView2.Size = new Size(652, 411);
+            dataGridView2.Size = new Size(748, 552);
             dataGridView2.TabIndex = 0;
             dataGridView2.CellMouseDoubleClick += dataGridView2_CellMouseDoubleClick;
             // 
@@ -354,19 +378,22 @@
             progressBar2.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             progressBar2.BackColor = Color.FromArgb(255, 255, 192);
             progressBar2.ForeColor = Color.Red;
-            progressBar2.Location = new Point(3, 3);
+            progressBar2.Location = new Point(3, 4);
+            progressBar2.Margin = new Padding(3, 4, 3, 4);
             progressBar2.Name = "progressBar2";
             progressBar2.RightToLeft = RightToLeft.No;
-            progressBar2.Size = new Size(652, 23);
+            progressBar2.Size = new Size(748, 31);
             progressBar2.TabIndex = 1;
             // 
             // groupBox3
             // 
             groupBox3.Controls.Add(tableLayoutPanel4);
             groupBox3.Dock = DockStyle.Fill;
-            groupBox3.Location = new Point(3, 62);
+            groupBox3.Location = new Point(3, 83);
+            groupBox3.Margin = new Padding(3, 4, 3, 4);
             groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(663, 468);
+            groupBox3.Padding = new Padding(3, 4, 3, 4);
+            groupBox3.Size = new Size(760, 627);
             groupBox3.TabIndex = 4;
             groupBox3.TabStop = false;
             groupBox3.Text = "Available";
@@ -378,12 +405,13 @@
             tableLayoutPanel4.Controls.Add(dataGridView1, 0, 1);
             tableLayoutPanel4.Controls.Add(progressBar1, 0, 0);
             tableLayoutPanel4.Dock = DockStyle.Fill;
-            tableLayoutPanel4.Location = new Point(3, 19);
+            tableLayoutPanel4.Location = new Point(3, 24);
+            tableLayoutPanel4.Margin = new Padding(3, 4, 3, 4);
             tableLayoutPanel4.Name = "tableLayoutPanel4";
             tableLayoutPanel4.RowCount = 2;
             tableLayoutPanel4.RowStyles.Add(new RowStyle());
             tableLayoutPanel4.RowStyles.Add(new RowStyle());
-            tableLayoutPanel4.Size = new Size(657, 446);
+            tableLayoutPanel4.Size = new Size(754, 599);
             tableLayoutPanel4.TabIndex = 1;
             // 
             // progressBar1
@@ -391,11 +419,12 @@
             progressBar1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             progressBar1.BackColor = Color.FromArgb(255, 255, 192);
             progressBar1.ForeColor = Color.Red;
-            progressBar1.Location = new Point(3, 3);
+            progressBar1.Location = new Point(3, 4);
+            progressBar1.Margin = new Padding(3, 4, 3, 4);
             progressBar1.Name = "progressBar1";
             progressBar1.RightToLeft = RightToLeft.Yes;
             progressBar1.RightToLeftLayout = true;
-            progressBar1.Size = new Size(651, 23);
+            progressBar1.Size = new Size(748, 31);
             progressBar1.TabIndex = 1;
             // 
             // openFileDialog1
@@ -418,11 +447,12 @@
             // 
             // SMTSetupMain
             // 
-            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1351, 629);
+            ClientSize = new Size(1544, 839);
             Controls.Add(tableLayoutPanel1);
             Icon = (Icon)resources.GetObject("$this.Icon");
+            Margin = new Padding(3, 4, 3, 4);
             Name = "SMTSetupMain";
             StartPosition = FormStartPosition.CenterScreen;
             Text = "SMT Setup";

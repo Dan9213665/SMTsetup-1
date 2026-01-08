@@ -1,4 +1,4 @@
-using FastMember;
+﻿using FastMember;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -30,6 +30,9 @@ using ComboBox = System.Windows.Forms.ComboBox;
 using Button = System.Windows.Forms.Button;
 using System.Xml.Linq;
 using System.Data.SqlClient;
+using System.Linq;
+using System.Xml.Schema;
+
 
 namespace SMTsetup
 {
@@ -49,6 +52,8 @@ namespace SMTsetup
         public int countItems = 0;
         string m = string.Empty;
         string loadedDirNameCSPS = string.Empty;
+
+        public int KITqty { get; set; } =1;
         public SMTSetupMain()
         {
             InitializeComponent();
@@ -127,6 +132,7 @@ namespace SMTsetup
         }
         private void button3_Click(object sender, EventArgs e)
         {
+
             //dataGridView1.DataSource = null;
             //dataGridView2.DataSource = null;
             label2.Text = string.Empty;
@@ -147,6 +153,22 @@ namespace SMTsetup
             //MessageBox.Show(folderPath.ToString());
             if (result == DialogResult.OK && Directory.EnumerateFiles(folderPath, "*.xls").Count() > 0) // Test result.
             {
+                if (result == DialogResult.OK)
+                {
+                    string input = Microsoft.VisualBasic.Interaction.InputBox(
+                        "Enter KIT quantity:", "KIT Quantity", "1");
+
+                    if (!int.TryParse(input, out int kit))
+                    {
+                        MessageBox.Show("Invalid KIT quantity, using 1 as default.");
+                        KITqty = 1;
+                    }
+                    else
+                    {
+                        KITqty = kit;
+                    }
+                }
+
                 label1.Text = "";
                 groupBox2.Text = "";
                 frmLoadingScreen ls = new frmLoadingScreen();
@@ -182,6 +204,18 @@ namespace SMTsetup
                                 while (reader.Read())
                                 {
                                     i += 1;
+
+                                    int _total=-1;
+                                    if (int.TryParse(reader[7].ToString(), out int parsedTotal))
+                                    {
+                                        _total = parsedTotal*KITqty;
+                                    }
+                                    else
+                                    {
+                                        // Handle the case where parsing fails, e.g., log an error or set a default value
+                                        _total = -1; // or any other default value you deem appropriate
+                                    }
+
                                     BomItem abc = new BomItem
                                     {
                                         SetNo = "M" + m + "-" + reader[0].ToString(),
@@ -189,6 +223,7 @@ namespace SMTsetup
                                         Comments = reader[2].ToString(),
                                         FdrType = reader[3].ToString(),
                                         PitchIndex = reader[4].ToString(),
+                                        Required = _total,
                                         FoundTheItem = false
                                     };
                                     if (i == 4)
@@ -248,6 +283,19 @@ namespace SMTsetup
                                     while (reader.Read())
                                     {
                                         i += 1;
+
+                                        int _total = -1;
+                                        if (int.TryParse(reader[7].ToString(), out int parsedTotal))
+                                        {
+                                            _total = parsedTotal;
+                                        }
+                                        else
+                                        {
+                                            // Handle the case where parsing fails, e.g., log an error or set a default value
+                                            _total = -1; // or any other default value you deem appropriate
+                                        }
+
+
                                         BomItem abc = new BomItem
                                         {
                                             SetNo = "M" + m + "-" + reader[0].ToString(),
@@ -255,6 +303,7 @@ namespace SMTsetup
                                             Comments = reader[2].ToString(),
                                             FdrType = reader[3].ToString(),
                                             PitchIndex = reader[4].ToString(),
+                                            Required = _total,
                                             FoundTheItem = false
                                         };
                                         if (i == 4)
@@ -373,37 +422,168 @@ namespace SMTsetup
             }
             dataGridView2.DataSource = Ftable.DefaultView;
             groupBox5.Text = "Found items : " + Founditems.Count.ToString() + "/" + (Availableitems.Count + Founditems.Count).ToString();
-            styleFormatter(dataGridView2);
+            styleFormatterFound(dataGridView2);
             progressBar2.Value = Founditems.Count;
         }
-        private void MoveItemFromAvaliableToFound(int index)
-        {
+        //private void MoveItemFromAvaliableToFound(int index)
+        //{
 
-            try
+        //    try
+        //    {
+
+
+
+        //        BomItem b = new BomItem
+        //        {
+        //            SetNo = dataGridView1.Rows[index].Cells[dataGridView1.Columns["SetNo"].DisplayIndex + 1].Value.ToString(),
+        //            CompName = dataGridView1.Rows[index].Cells[dataGridView1.Columns["CompName"].DisplayIndex + 1].Value.ToString(),
+        //            Comments = dataGridView1.Rows[index].Cells[dataGridView1.Columns["Comments"].DisplayIndex + 1].Value.ToString(),
+        //            FdrType = dataGridView1.Rows[index].Cells[dataGridView1.Columns["FdrType"].DisplayIndex + 1].Value.ToString(),
+        //            PitchIndex = dataGridView1.Rows[index].Cells[dataGridView1.Columns["PitchIndex"].DisplayIndex + 1].Value.ToString(),
+        //            FoundTheItem = true
+        //        };
+        //        //MessageBox.Show(dataGridView1.Rows[index].Cells[dataGridView1.Columns["SetNo"].DisplayIndex+1].Value.ToString());
+        //        Founditems.Add(b);
+        //        var itemToRemove = Availableitems.Single(r => r.CompName == dataGridView1.Rows[index].Cells[dataGridView1.Columns["CompName"].DisplayIndex + 1].Value.ToString());
+        //        Availableitems.Remove(itemToRemove);
+        //        SendToPrint(itemToRemove);
+        //        RepopulateFoundTable();
+        //        RepopulateAvailableTable();
+        //        textBox1.Clear();
+        //    }
+        //    catch (Exception)
+        //    {
+        //        //throw;
+        //    }
+        //}
+
+
+        //private void MoveItemFromAvaliableToFound(int index)
+        //{
+        //    try
+        //    {
+        //        string compName =
+        //            dataGridView1.Rows[index]
+        //            .Cells[dataGridView1.Columns["CompName"].DisplayIndex]
+        //            .Value.ToString();
+
+        //        int? qty = AskForQuantity(compName);
+        //        if (qty == null)
+        //            return; // user cancelled or invalid input
+
+        //        BomItem b = new BomItem
+        //        {
+        //            SetNo = dataGridView1.Rows[index].Cells[dataGridView1.Columns["SetNo"].DisplayIndex + 1].Value.ToString(),
+        //            CompName = compName,
+        //            Comments = dataGridView1.Rows[index].Cells[dataGridView1.Columns["Comments"].DisplayIndex + 1].Value.ToString(),
+        //            FdrType = dataGridView1.Rows[index].Cells[dataGridView1.Columns["FdrType"].DisplayIndex + 1].Value.ToString(),
+        //            PitchIndex = dataGridView1.Rows[index].Cells[dataGridView1.Columns["PitchIndex"].DisplayIndex + 1].Value.ToString(),
+        //            FoundTheItem = true,
+        //            FoundQtys = new[] { qty.Value }
+        //        };
+
+        //        Founditems.Add(b);
+
+        //        var itemToRemove = Availableitems.Single(r => r.CompName == compName);
+        //        Availableitems.Remove(itemToRemove);
+
+        //        SendToPrint(itemToRemove);
+        //        RepopulateFoundTable();
+        //        RepopulateAvailableTable();
+        //        textBox1.Clear();
+        //    }
+        //    catch (Exception)
+        //    {
+        //    }
+        //}
+
+        //private void MoveItemFromAvaliableToFound(int index)
+        //{
+        //    try
+        //    {
+        //        var row = dataGridView1.Rows[index];
+
+        //        // Use Index instead of DisplayIndex
+        //        string compName = row.Cells[dataGridView1.Columns["CompName"].Index].Value?.ToString();
+        //        if (string.IsNullOrWhiteSpace(compName))
+        //        {
+        //            MessageBox.Show("CompName is empty for this row.");
+        //            return;
+        //        }
+
+        //        int? qty = AskForQuantity(compName);
+        //        if (qty == null&&qty>0)
+        //            return; // user cancelled or invalid input
+
+        //        BomItem b = new BomItem
+        //        {
+        //            SetNo = row.Cells[dataGridView1.Columns["SetNo"].Index].Value?.ToString(),
+        //            CompName = compName,
+        //            Comments = row.Cells[dataGridView1.Columns["Comments"].Index].Value?.ToString(),
+        //            FdrType = row.Cells[dataGridView1.Columns["FdrType"].Index].Value?.ToString(),
+        //            PitchIndex = row.Cells[dataGridView1.Columns["PitchIndex"].Index].Value?.ToString(),
+        //            FoundTheItem = true,
+        //            FoundQtys = new[] { qty.Value },
+        //            Required = row.Cells[dataGridView1.Columns["Required"].Index].Value as int?
+
+        //        };
+
+        //        Founditems.Add(b);
+
+        //        var itemToRemove = Availableitems.Single(r => r.CompName == compName);
+        //        Availableitems.Remove(itemToRemove);
+
+        //        SendToPrint(itemToRemove);
+        //        RepopulateFoundTable();
+        //        RepopulateAvailableTable();
+        //        textBox1.Clear();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Always log exceptions during debugging
+        //       // MessageBox.Show($"Error moving item: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+        //    }
+        //}
+
+        private void MoveItemFromAvaliableToFound(string compName)
+        {
+            // Find item in Availableitems
+            var item = Availableitems.SingleOrDefault(i => i.CompName == compName);
+
+            if (item == null)
             {
-                BomItem b = new BomItem
-                {
-                    SetNo = dataGridView1.Rows[index].Cells[dataGridView1.Columns["SetNo"].DisplayIndex + 1].Value.ToString(),
-                    CompName = dataGridView1.Rows[index].Cells[dataGridView1.Columns["CompName"].DisplayIndex + 1].Value.ToString(),
-                    Comments = dataGridView1.Rows[index].Cells[dataGridView1.Columns["Comments"].DisplayIndex + 1].Value.ToString(),
-                    FdrType = dataGridView1.Rows[index].Cells[dataGridView1.Columns["FdrType"].DisplayIndex + 1].Value.ToString(),
-                    PitchIndex = dataGridView1.Rows[index].Cells[dataGridView1.Columns["PitchIndex"].DisplayIndex + 1].Value.ToString(),
-                    FoundTheItem = true
-                };
-                //MessageBox.Show(dataGridView1.Rows[index].Cells[dataGridView1.Columns["SetNo"].DisplayIndex+1].Value.ToString());
-                Founditems.Add(b);
-                var itemToRemove = Availableitems.Single(r => r.CompName == dataGridView1.Rows[index].Cells[dataGridView1.Columns["CompName"].DisplayIndex + 1].Value.ToString());
-                Availableitems.Remove(itemToRemove);
-                SendToPrint(itemToRemove);
-                RepopulateFoundTable();
-                RepopulateAvailableTable();
-                textBox1.Clear();
+                // Should never happen if caller checked correctly
+                return;
             }
-            catch (Exception)
+
+            int? qty = AskForQuantity(compName);
+            if (!qty.HasValue || qty.Value <= 0)
+                return;
+
+            // Create found item
+            BomItem found = new BomItem
             {
-                //throw;
-            }
+                SetNo = item.SetNo,
+                CompName = item.CompName,
+                Comments = item.Comments,
+                FdrType = item.FdrType,
+                PitchIndex = item.PitchIndex,
+                FoundTheItem = true,
+                Required = item.Required,
+                FoundQtys = new[] { qty.Value }
+            };
+
+            Founditems.Add(found);
+            Availableitems.Remove(item);
+
+            SendToPrint(item);
+
+            RepopulateFoundTable();
+            RepopulateAvailableTable();
+            textBox1.Clear();
         }
+
+
         private void textBox1_TextChanged_1(object sender, EventArgs e)
         {
 
@@ -434,59 +614,151 @@ namespace SMTsetup
             dataGridView1.Refresh();
             styleFormatter(dataGridView1);
         }
+        //private void textBox1_KeyDown_1(object sender, KeyEventArgs e)
+        //{
+        //    if (e.KeyCode == Keys.Enter && textBox1.Text != "")
+        //    {
+        //        dataGridView2.ClearSelection();
+        //        try
+        //        {
+        //            if (comboBox1.Text == "---_")
+        //            {
+        //                textBox1.Text.Substring(4);
+        //                MoveItemFromAvaliableToFound(dataGridView1.CurrentCell.RowIndex);
+        //            }
+        //            else if (comboBox1.Text == "CIS_")
+        //            {
+        //                textBox1.Text.Replace("CIS_", "CIS_CIS");
+        //                MoveItemFromAvaliableToFound(dataGridView1.CurrentCell.RowIndex);
+        //            }
+        //            else
+        //            {
+        //                MoveItemFromAvaliableToFound(dataGridView1.CurrentCell.RowIndex);
+        //            }
+
+
+
+        //        }
+        //        catch (Exception)
+        //        {
+        //            if (!string.IsNullOrEmpty(textBox1.Text) && Availableitems.Where(item => item.CompName != textBox1.Text).ToList()==true)
+        //            {
+
+        //                label2.Text = textBox1.Text + " Not found in AVALIABLE ITEMS list";
+        //                label2.BackColor = Color.Red;
+        //                Blink();
+
+        //            }
+        //            //Founditems
+
+
+
+
+
+
+        //            if (comboBox1.Text == "---_" && textBox1.Text.Length > 8)
+        //            {
+        //                string cutof = textBox1.Text.Substring(4);
+        //                AlreadyFoundLogic(cutof,true);
+        //            }
+        //            else if (comboBox1.Text == "CIS_" && textBox1.Text.Length > 8)
+        //            {
+        //                string cutof = textBox1.Text.Replace("CIS_", "CIS_CIS");
+        //                AlreadyFoundLogic(cutof);
+        //            }
+        //            else
+        //            {
+        //                AlreadyFoundLogic(textBox1.Text);
+        //            }
+        //            textBox1.Clear();
+        //            DataView dv = Atable.DefaultView;
+        //            dataGridView1.DataSource = dv;
+        //            dataGridView1.Update();
+        //            styleFormatter(dataGridView1);
+        //        }
+        //    }
+        //}
+
+
         private void textBox1_KeyDown_1(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Enter && textBox1.Text != "")
+            if (e.KeyCode != Keys.Enter || string.IsNullOrWhiteSpace(textBox1.Text))
+                return;
+
+            dataGridView2.ClearSelection();
+
+            // Process scanned text based on prefix
+            string scannedText = textBox1.Text.Trim();
+            if (comboBox1.Text == "---_" && scannedText.Length > 4)
+                scannedText = scannedText.Substring(4);
+            else if (comboBox1.Text == "CIS_")
+                scannedText = scannedText.Replace("CIS_", "CIS_CIS");
+
+            // First, check if the item exists in Availableitems
+            var availableMatch = Availableitems.FirstOrDefault(item => item.CompName == scannedText);
+
+            if (availableMatch != null)
             {
-                dataGridView2.ClearSelection();
-                try
+               
+                MoveItemFromAvaliableToFound(availableMatch.CompName);
+            }
+            else
+            {
+                // Not in Availableitems → check Founditems
+                var foundMatch = Founditems.FirstOrDefault(item => item.CompName == scannedText);
+
+                if (foundMatch == null)
                 {
-                    if (comboBox1.Text == "---_")
-                    {
-                        textBox1.Text.Substring(4);
-                        MoveItemFromAvaliableToFound(dataGridView1.CurrentCell.RowIndex);
-                    }
-                    else if (comboBox1.Text == "CIS_")
-                    {
-                        textBox1.Text.Replace("CIS_", "CIS_CIS");
-                        MoveItemFromAvaliableToFound(dataGridView1.CurrentCell.RowIndex);
-                    }
-                    else
-                    {
-                        MoveItemFromAvaliableToFound(dataGridView1.CurrentCell.RowIndex);
-                    }
-
-
-
-                }
-                catch (Exception)
-                {
-                    label2.Text = textBox1.Text + " Not found in AVALIABLE ITEMS list";
+                    // Truly nowhere → show error
+                    label2.Text = scannedText + " Not found in KIT";
                     label2.BackColor = Color.Red;
                     Blink();
+                }
+                else
+                {
+                    // Item is in Founditems → check if total covers Required
+                    int totalFound = foundMatch.FoundQtys?.Sum() ?? 0;
+                    int required = foundMatch.Required ?? 0;
 
-                    if (comboBox1.Text == "---_" && textBox1.Text.Length > 8)
+                    if (totalFound < required)
                     {
-                        string cutof = textBox1.Text.Substring(4);
-                        AlreadyFoundLogic(cutof,true);
-                    }
-                    else if (comboBox1.Text == "CIS_" && textBox1.Text.Length > 8)
-                    {
-                        string cutof = textBox1.Text.Replace("CIS_", "CIS_CIS");
-                        AlreadyFoundLogic(cutof);
+                        // Ask user for additional qty
+                        string inputQty = Microsoft.VisualBasic.Interaction.InputBox(
+                            $"Item {scannedText} already found but total ({totalFound}) < required ({required}). Enter additional qty:",
+                            "Add Quantity",
+                            "0");
+
+                        if (int.TryParse(inputQty, out int additional) && additional > 0)
+                        {
+                            // Add to FoundQtys
+                            if (foundMatch.FoundQtys == null)
+                                foundMatch.FoundQtys = new int[] { additional };
+                            else
+                                foundMatch.FoundQtys = foundMatch.FoundQtys.Concat(new int[] { additional }).ToArray();
+                        }
+
+                        SendToPrint(foundMatch);
                     }
                     else
                     {
-                        AlreadyFoundLogic(textBox1.Text);
+                        // Already sufficient
+                        label2.Text = scannedText + " already found with sufficient quantity";
+                        label2.BackColor = Color.Yellow;
+                        Blink();
                     }
-                    textBox1.Clear();
-                    DataView dv = Atable.DefaultView;
-                    dataGridView1.DataSource = dv;
-                    dataGridView1.Update();
-                    styleFormatter(dataGridView1);
                 }
             }
+
+            // Clear input and refresh Availableitems view
+            textBox1.Clear();
+            //DataView dv = Atable.DefaultView;
+            //dataGridView1.DataSource = dv;
+            //dataGridView1.Update();
+            //styleFormatter(dataGridView1);
+            RepopulateAvailableTable();
+            RepopulateFoundTable();
         }
+
         private void AlreadyFoundLogic(string searchValue, bool partial = false)
         {
             dataGridView2.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -497,14 +769,14 @@ namespace SMTsetup
                 {
                     foreach (DataGridViewRow row in dataGridView2.Rows)
                     {
-                        if (row.Cells[dataGridView2.Columns["CompName"].DisplayIndex + 1].Value.ToString().Contains(searchValue))
+                        if (row.Cells[dataGridView2.Columns["CompName"].DisplayIndex].Value.ToString().Contains(searchValue))
                         {
                             label2.Text = searchValue + " already exists in the FOUND ITEMS list !";
                             label2.BackColor = Color.Red;
                             Blink();
                             row.Selected = true;
-                            dataGridView2.CurrentCell = dataGridView2.Rows[row.Index].Cells[dataGridView1.Columns["CompName"].DisplayIndex + 1];
-                            string pr = dataGridView2.Rows[row.Index].Cells[dataGridView1.Columns["SetNo"].DisplayIndex + 1].Value.ToString();
+                            dataGridView2.CurrentCell = dataGridView2.Rows[row.Index].Cells[dataGridView1.Columns["CompName"].Index];
+                            string pr = dataGridView2.Rows[row.Index].Cells[dataGridView1.Columns["SetNo"].Index].Value.ToString();
                             PrintDocument p = new PrintDocument();
                             p.PrintPage += delegate (object sender1, PrintPageEventArgs e1)
                             {
@@ -630,14 +902,21 @@ namespace SMTsetup
             dgw.Columns["FdrType"].DisplayIndex = 2;
             dgw.Columns["PitchIndex"].DisplayIndex = 3;
             dgw.Columns["SetNo"].DisplayIndex = 4;
-            dgw.Columns["FoundTheItem"].DisplayIndex = 5;
+            dgw.Columns["Required"].DisplayIndex = 5;
+            dgw.Columns["FoundTheItem"].DisplayIndex = 6;
             dgw.Columns["FoundTheItem"].Visible = false;
+            dgw.Columns["Calc"].DisplayIndex = 7;
+            dgw.Columns["Calc"].Visible = false;
+            dgw.Columns["TotalInKit"].DisplayIndex = 8;
             dgw.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dgw.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dgw.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dgw.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dgw.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dgw.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[8].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
             dgw.AutoResizeColumns();
             int setNoColIndex = dgw.Columns["SetNo"].DisplayIndex + 1;
             foreach (DataGridViewRow r in dgw.Rows)
@@ -651,6 +930,59 @@ namespace SMTsetup
                     dgw.Rows[r.Index].Cells[setNoColIndex].Style.BackColor = Color.PaleVioletRed;
                 }
             }
+        }
+        private void styleFormatterFound(DataGridView dgw)
+        {
+            dgw.Columns["CompName"].DisplayIndex = 0;
+            dgw.Columns["Comments"].DisplayIndex = 1;
+            dgw.Columns["FdrType"].DisplayIndex = 2;
+            dgw.Columns["PitchIndex"].DisplayIndex = 3;
+            dgw.Columns["SetNo"].DisplayIndex = 4;
+            dgw.Columns["FoundTheItem"].DisplayIndex = 5;
+            dgw.Columns["FoundTheItem"].Visible = false;
+            dgw.Columns["Calc"].DisplayIndex = 6;
+            dgw.Columns["Required"].DisplayIndex = 7;
+            dgw.Columns["TotalInKit"].DisplayIndex = 8;
+            dgw.Columns[0].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[1].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[2].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[3].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[4].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[5].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[6].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[7].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            dgw.Columns[8].AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+
+            dgw.AutoResizeColumns();
+            int setNoColIndex = dgw.Columns["SetNo"].Index;
+            foreach (DataGridViewRow r in dgw.Rows)
+            {
+                if (r.Cells[setNoColIndex].Value.ToString().StartsWith("M1"))
+                {
+                    dgw.Rows[r.Index].Cells[setNoColIndex].Style.BackColor = Color.DarkGreen;
+                }
+                else if (r.Cells[setNoColIndex].Value.ToString().StartsWith("M2"))
+                {
+                    dgw.Rows[r.Index].Cells[setNoColIndex].Style.BackColor = Color.PaleVioletRed;
+                }
+            }
+
+            int setRequiredColIndex = dgw.Columns["Required"].Index;
+            int setTotalColIndex = dgw.Columns["TotalInKit"].Index;
+            foreach (DataGridViewRow r in dgw.Rows)
+            {
+                if (int.Parse(r.Cells[setRequiredColIndex].Value.ToString()) < int.Parse(r.Cells[setTotalColIndex].Value.ToString()))
+                {
+                    dgw.Rows[r.Index].Cells[setRequiredColIndex].Style.BackColor = Color.DarkGreen;
+                }
+                else if (int.Parse(r.Cells[setRequiredColIndex].Value.ToString()) >= int.Parse(r.Cells[setTotalColIndex].Value.ToString()))
+                {
+                    dgw.Rows[r.Index].Cells[setRequiredColIndex].Style.BackColor = Color.OrangeRed;
+                }
+            }
+
+
+
         }
         private void addToXML()
         {
@@ -1194,5 +1526,66 @@ namespace SMTsetup
                 }
             }
         }
+
+        private int? AskForQuantity(string compName)
+        {
+            using (Form f = new Form())
+            {
+                f.Text = "Enter quantity";
+                f.FormBorderStyle = FormBorderStyle.FixedDialog;
+                f.StartPosition = FormStartPosition.CenterParent;
+                f.MinimizeBox = false;
+                f.MaximizeBox = false;
+                f.Width = 300;
+                f.Height = 140;
+
+                Label lbl = new Label
+                {
+                    Text = $"Quantity for {compName}:",
+                    Left = 10,
+                    Top = 10,
+                    Width = 260
+                };
+
+                TextBox tb = new TextBox
+                {
+                    Left = 10,
+                    Top = 35,
+                    Width = 260
+                };
+
+                Button ok = new Button
+                {
+                    Text = "OK",
+                    DialogResult = DialogResult.OK,
+                    Left = 110,
+                    Width = 75,
+                    Top = 70
+                };
+
+                Button cancel = new Button
+                {
+                    Text = "Cancel",
+                    DialogResult = DialogResult.Cancel,
+                    Left = 195,
+                    Width = 75,
+                    Top = 70
+                };
+
+                f.Controls.AddRange(new Control[] { lbl, tb, ok, cancel });
+                f.AcceptButton = ok;
+                f.CancelButton = cancel;
+
+                if (f.ShowDialog() == DialogResult.OK &&
+                    int.TryParse(tb.Text, out int qty) &&
+                    qty > 0)
+                {
+                    return qty;
+                }
+
+                return null;
+            }
+        }
+
     }
 }
